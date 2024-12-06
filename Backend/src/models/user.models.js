@@ -58,19 +58,23 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 
 // JWT:- Bearer Token
 userSchema.methods.generateAccessToken = function () {
-  return jwt.sign(
-    {
-      _id: this._id,
-      email: this.email,
-      phoneNumber: this.phoneNumber,
-      fullname: this.fullname,
-      role: this.role
-      
-    },
-    process.env.ACESS_TOKEN_SECRET,
-    {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRY || '2d',
-    }
-  );
+  try {
+    return jwt.sign(
+      {
+        _id: this._id,
+        email: this.email,
+        phoneNumber: this.phoneNumber,
+        fullname: this.fullname,
+        role: this.role,
+      },
+      process.env.ACCESS_TOKEN_SECRET,  // Check for the correct secret
+      {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRY || '2d',
+      }
+    );
+  } catch (error) {
+    console.log("Error generating JWT:", error);
+    throw new Error('Error generating access token');
+  }
 };
 export const User = mongoose.model("User", userSchema);

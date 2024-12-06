@@ -71,8 +71,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: true,
   };
 
   res
@@ -111,5 +110,39 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged Out successfully!"));
 });
 
+const updateProfile = asyncHandler(async (req, res) => {
+  try {
+    const { fullname, email, phoneNumber, bio, skills } = req.body;
 
-export { registerUser, loginUser, logoutUser, };
+    const userId = req.user._id;
+    let user = await User.findById(userId);
+
+    if (!user) {
+      throw new ApiError(404, "User not found!");
+    }
+
+    if (fullname) user.fullname = fullname;
+    if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (bio) user.profile.bio = bio;
+
+    if (skills) {
+      user.profile.skills = Array.isArray(skills)
+        ? skills
+        : typeof skills === "string"
+        ? skills.split(",").map((skill) => skill.trim())
+        : user.profile.skills;
+    }
+
+    await user.save();
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user, "Profile updated successfully!"));
+  } catch (error) {
+    console.log("Update Profile failed:", error);
+    throw new ApiError(500, "Profile update failed!");
+  }
+});
+
+export { registerUser, loginUser, logoutUser, updateProfile };
