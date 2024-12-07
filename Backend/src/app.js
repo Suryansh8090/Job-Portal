@@ -4,6 +4,7 @@ import cors from "cors";
 import userRouter from "./routes/user.route.js";
 import companyRouter from "./routes/company.route.js"
 import jobRouter from "./routes/job.route.js"
+import applicationRouter from "./routes/application.route.js"
 
 const app = express();
 
@@ -22,4 +23,7 @@ app.use(cookieParser());
 app.use("/api/v1/user", userRouter);
 app.use("/api/v2/company", companyRouter)
 app.use("/api/v3/job", jobRouter)
+app.use("/api/v4/application", applicationRouter)
+
+
 export { app };
