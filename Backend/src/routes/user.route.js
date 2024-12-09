@@ -6,10 +6,11 @@ import {
   updateProfile 
 } from "../controllers/user.controller.js";
 import { isAuthenticated } from "../middlewares/isAuthenticated.js"
+import { singleUpload } from "../middlewares/multer.js";
 
 const router = Router()
 
-router.route("/register").post(registerUser)
+router.route("/register").post(singleUpload, registerUser)
 router.route("/login").post(loginUser)
 router.route("/logout").post(logoutUser)
 router.route("/profile/update").post(isAuthenticated, updateProfile)
