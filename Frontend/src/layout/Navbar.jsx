@@ -10,7 +10,7 @@ import { LogOut, User2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 function Navbar() {
-  const user = false;
+  const user = true;
   return (
     <div className="bg-[rgba(224,221,221,0.08)]">
       <div className="flex items-center justify-between max-w-7xl h-16 mx-auto">
@@ -21,14 +21,26 @@ function Navbar() {
         </div>
         <div className="flex items-center gap-10">
           <ul className="flex items-center gap-6 font-medium cursor-pointer">
-            <li><Link to={'/'}>Home</Link></li>
-            <li><Link to={'/jobs'}>Jobs</Link></li>
-            <li><Link to={'/browse'}>Browse</Link></li>
+            <li>
+              <Link to={"/"}>Home</Link>
+            </li>
+            <li>
+              <Link to={"/jobs"}>Jobs</Link>
+            </li>
+            <li>
+              <Link to={"/browse"}>Browse</Link>
+            </li>
           </ul>
           {!user ? (
             <div className="flex gap-1">
-              <Link to='/login'><Button variant="outline">Login</Button></Link>
-              <Link to='/signup'><Button className='bg-[#6A38C2] hover:bg-[#5b30a6]'>Signup</Button></Link>
+              <Link to="/login">
+                <Button variant="outline">Login</Button>
+              </Link>
+              <Link to="/signup">
+                <Button className="bg-[#6A38C2] hover:bg-[#5b30a6]">
+                  Signup
+                </Button>
+              </Link>
             </div>
           ) : (
             <Popover>
