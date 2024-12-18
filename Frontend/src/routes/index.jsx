@@ -4,6 +4,7 @@ import Login from "../authentication/Login";
 import Signup from "../authentication/Signup";
 import Jobs from "@/home/NavComponent/Jobs/Jobs";
 import Browse from "@/home/NavComponent/Browse/Browse";
+import Profile from "@/profile/Profile";
 
 
 
@@ -27,6 +28,10 @@ const appRoute = createBrowserRouter([
     {
         path:'/browse',
         element: <Browse/>
+    },
+    {
+        path: '/profile',
+        element: <Profile/>
     }
 
     
