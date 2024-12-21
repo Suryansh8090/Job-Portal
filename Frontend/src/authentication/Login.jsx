@@ -28,31 +28,37 @@ function Login() {
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
+
   const submitHandler = async (e) => {
     e.preventDefault();
-    // console.log(input);
+
     try {
       dispatch(setLoading(true));
 
       const res = await axios.post(`${USER_API_END_POINT}/login`, input, {
         headers: {
           "Content-Type": "application/json",
-          withCredentials: true,
         },
       });
+
       if (res.data.success) {
-        dispatch(setUser(res.data.user))
-        navigate("/");
-        toast.success(res.data.message);
+        // Save the token to localStorage
+        const token = res.data.accessToken;
+        if (token) {
+          localStorage.setItem("token", token);
+          dispatch(setUser(res.data.user));
+          navigate("/"); // Redirect to home after login
+          toast.success(res.data.message);
+        } else {
+          toast.error("Token not received. Please try again.");
+        }
       }
     } catch (error) {
-      // If error.response exists, it means the error response came from the backend
       if (error.response) {
         console.log("Error Response:", error.response.data);
         const message = error.response.data.message || "An error occurred";
-        toast.error(message); // Display error message to the user
+        toast.error(message);
       } else {
-        // If no response (network error, etc.)
         console.log("Error:", error.message);
         toast.error("An unexpected error occurred. Please try again.");
       }
@@ -60,11 +66,13 @@ function Login() {
       dispatch(setLoading(false));
     }
   };
+
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate("/"); // Redirect if already logged in
     }
-  }, []);
+  }, [user, navigate]);
+
   return (
     <>
       <Navbar />
@@ -193,10 +201,8 @@ function Login() {
                 </RadioGroup>
               </div>
               {/* Login Button */}
-
               {loading ? (
                 <Button className="flex items-center justify-center w-full bg-blue-600 text-white hover:bg-blue-700">
-                  {" "}
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Please wait
                 </Button>
@@ -214,8 +220,8 @@ function Login() {
             <div className="mt-6 text-center text-sm text-gray-500">
               <p>
                 Don't have an account?{" "}
-                <a href="/signup" className="text-blue-600 hover:underline">
-                  Signup
+                <a href="/signup" className="text-blue-600">
+                  Sign up
                 </a>
               </p>
             </div>
