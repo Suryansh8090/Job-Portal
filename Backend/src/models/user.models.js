@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     profile: {
-      bio: { type: String },
+      bio: { type: String, default: "" },
       skills: [{ type: String }],
       resume: { type: String }, // URL to resume file
       resumeOriginalName: { type: String },
@@ -67,14 +67,14 @@ userSchema.methods.generateAccessToken = function () {
         fullname: this.fullname,
         role: this.role,
       },
-      process.env.ACCESS_TOKEN_SECRET,  // Check for the correct secret
+      process.env.ACCESS_TOKEN_SECRET, // Check for the correct secret
       {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIRY || '2d',
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "2d",
       }
     );
   } catch (error) {
     console.log("Error generating JWT:", error);
-    throw new Error('Error generating access token');
+    throw new Error("Error generating access token");
   }
 };
 export const User = mongoose.model("User", userSchema);
