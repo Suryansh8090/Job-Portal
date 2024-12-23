@@ -8,9 +8,12 @@ import {
 import React from "react";
 import { LogOut, User2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 
 function Navbar() {
-  const user = true;
+  const { user } = useSelector((store) => store.auth);
+
   return (
     <div className="bg-[rgba(224,221,221,0.08)]">
       <div className="flex items-center justify-between max-w-7xl h-16 mx-auto">
@@ -46,31 +49,27 @@ function Navbar() {
             <Popover>
               <PopoverTrigger asChild>
                 <Avatar className="cursor-pointer">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
+                  <AvatarImage src={user?.profile?.profilePhoto} />
                 </Avatar>
               </PopoverTrigger>
               <PopoverContent className="w-80">
                 <div className="flex gap-4 space-y-1">
                   <Avatar className="cursor-pointer ">
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
-                    />
+                    <AvatarImage src={user?.profile?.profilePhoto} />
                   </Avatar>
                   <div>
-                    <h4 className="font-semibold">Suryansh Kushwaha</h4>
+                    <h4 className="font-semibold">{user?.fullname}</h4>
                     <p className="text-sm text-muted-foreground">
-                      lore njjkbk kjbjkbk kbjkjbjkb kjbkb{" "}
+                      {user?.profile?.bio}
                     </p>
                   </div>
                 </div>
                 <div className="flex flex-col my-2 text-gray-600">
                   <div className="flex w-fit items-center gap-1 cursor-pointer">
                     <User2 />
-                    <Button variant="link"><Link to= "/profile">View Profile</Link></Button>
+                    <Button variant="link">
+                      <Link to="/profile">View Profile</Link>
+                    </Button>
                   </div>
                   <div className="flex w-fit items-center gap-1 cursor-pointer">
                     <LogOut />
