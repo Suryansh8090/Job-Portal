@@ -23,13 +23,15 @@ function Signup() {
     password: "",
     role: "",
     file: "",
+    profilePhoto: null
   });
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
   const fileHandler = (e) => {
-    setInput({ ...input, file: e.target.files?.[0] });
+    const file = e.target.files?.[0]
+    setInput({ ...input, profilePhoto: file });
   };
 
   const navigate = useNavigate();
@@ -46,8 +48,8 @@ function Signup() {
     formData.append("phoneNumber", input.phoneNumber);
     formData.append("password", input.password);
     formData.append("role", input.role);
-    if (input.file) {
-      formData.append("file", input.file);
+    if (input.profilePhoto) {
+      formData.append("profilePhoto", input.profilePhoto);
     }
 
     try {
@@ -201,6 +203,7 @@ function Signup() {
                   type="file"
                   onChange={fileHandler}
                   className="cursor-pointer"
+                  name="profilePhoto"
                 />
               </div>
               {/* Password Input */}

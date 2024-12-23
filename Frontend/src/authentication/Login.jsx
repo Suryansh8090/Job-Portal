@@ -46,6 +46,8 @@ function Login() {
         const token = res.data.accessToken;
         if (token) {
           localStorage.setItem("token", token);
+          sessionStorage.setItem("token", token); // Store token in sessionStorage
+          sessionStorage.setItem("user", JSON.stringify(res.data.user)); // Store user data in sessionStorage
           dispatch(setUser(res.data.user));
           navigate("/"); // Redirect to home after login
           toast.success(res.data.message);
@@ -62,6 +64,9 @@ function Login() {
         console.log("Error:", error.message);
         toast.error("An unexpected error occurred. Please try again.");
       }
+      // Clear any existing session data if login fails
+      sessionStorage.removeItem("token");
+      localStorage.removeItem("token");
     } finally {
       dispatch(setLoading(false));
     }

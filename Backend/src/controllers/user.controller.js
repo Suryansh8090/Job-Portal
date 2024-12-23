@@ -2,7 +2,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
-
+import getDataUri from "../utils/datauri.js";
+import cloudinary from "../utils/cloudinary.js";
 
 const generateAccessToken = async function (userId) {
   try {
@@ -27,13 +28,28 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User already exists with this email.");
   }
 
-  const user = await User.create({
+  const user = new User({
     fullname,
     email,
     phoneNumber,
     password,
     role,
   });
+
+  // Handle profile photo upload if present
+  if (req.files?.profilePhoto?.[0]) {
+    const profilePhoto = req.files.profilePhoto[0];
+    const photoUri = getDataUri(profilePhoto);
+    const photoCloud = await cloudinary.uploader.upload(photoUri.content, {
+      folder: "user_profile_photos",
+      public_id: `profilePhoto_${user._id}`,
+    });
+    user.profile.profilePhoto = photoCloud.secure_url;
+  }
+
+  // Save user to the database
+  await user.save();
+
   const createdUser = await User.findById(user._id).select("-password");
 
   if (!createdUser) {
@@ -94,8 +110,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   //  COOKIES
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: true,
   };
   return res
     .status(200)
@@ -105,9 +120,10 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const updateProfile = asyncHandler(async (req, res) => {
   try {
+    //  console.log("Multer Files:", req.files); // Log the files received from multer
+
     const { fullname, email, phoneNumber, bio, skills } = req.body;
     // console.log(fullname, email,  phoneNumber, bio, skills);
-    
 
     const userId = req.user._id;
     let user = await User.findById(userId);
@@ -129,7 +145,31 @@ const updateProfile = asyncHandler(async (req, res) => {
         : user.profile.skills;
     }
 
+    // Handle profile photo upload
+    if (req.files?.profilePhoto?.[0]) {
+      const profilePhoto = req.files.profilePhoto[0];
+      const photoUri = getDataUri(profilePhoto);
+      const photoCloud = await cloudinary.uploader.upload(photoUri.content, {
+        folder: "user_profile_photos",
+        public_id: `profilePhoto_${user._id}`,
+      });
+      user.profile.profilePhoto = photoCloud.secure_url;
+    }
+
+    // Handle resume upload
+    if (req.files?.resume?.[0]) {
+      const resume = req.files.resume[0];
+      const resumeUri = getDataUri(resume);
+      const resumeCloud = await cloudinary.uploader.upload(resumeUri.content, {
+       
+        folder: "user_resumes",
+        public_id: `resume_${user._id}`,
+      });
+      user.profile.resume = resumeCloud.secure_url;
+    }
+
     await user.save();
+    // console.log(user);
 
     return res
       .status(200)

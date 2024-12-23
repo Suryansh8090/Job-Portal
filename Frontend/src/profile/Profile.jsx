@@ -20,7 +20,12 @@ function Profile() {
         <div className="flex justify-between">
           <div className="flex items-center gap-4">
             <Avatar className="w-24 h-24">
-              <AvatarImage src={user?.profile?.profileImg || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHSDBMGpoT7bM8E61PuHZmA7K8XG69m1qmjQ&s"} />
+              <AvatarImage
+                src={
+                  user?.profile?.profilePhoto ||
+                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHSDBMGpoT7bM8E61PuHZmA7K8XG69m1qmjQ&s"
+                }
+              />
             </Avatar>
             <div>
               <h1 className="font-medium text-xl">{user?.fullname}</h1>
@@ -60,7 +65,7 @@ function Profile() {
         <div className="grid w-full max-w-sm item-center gap-1.5 mx-5">
           {user?.profile?.resume ? (
             <a
-              target="blank"
+              target="_blank"  
               className="text-md font-bold hover:text-blue-500"
               href={user?.profile?.resume}
             >

@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { setUser } from "@/public/authslice";
 import { useDispatch, useSelector } from "react-redux";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import USER_API_END_POINT from "@/utils/constant";
@@ -31,10 +37,10 @@ function UpdateProfileDialog({ open, setOpen }) {
 
   const fileChangeHandler = (e) => {
     const file = e.target.files?.[0];
-    if (e.target.name === "profileImage") {
-      setInput({ ...input, profileImage: file }); // Update profile image
-    } else if (e.target.name === "file") {
-      setInput({ ...input, file }); // Update resume file
+    if (e.target.name === "profilePhoto") {
+      setInput({ ...input, profilePhoto: file }); // Update profile image
+    } else if (e.target.name === "resume") {
+      setInput({ ...input, resume:file }); // Update resume file
     }
   };
 
@@ -53,17 +59,17 @@ function UpdateProfileDialog({ open, setOpen }) {
     formData.append("phoneNumber", input.phoneNumber);
     formData.append("bio", input.bio);
     formData.append("skills", input.skills);
-    if (input.profileImage) {
-      formData.append("profileImage", input.profileImage); // Append profile image
+    if (input.profilePhoto) {
+      formData.append("profilePhoto", input.profilePhoto); // Append profile image
     }
-    if (input.file) {
-      formData.append("file", input.file);
+    if (input.resume) {
+      formData.append("resume", input.resume);
     }
 
     try {
       setLoading(true); // Show loading state
       const res = await axios.post(
-        `${USER_API_END_POINT}/profile/update`,  // Replace with your actual API URL
+        `${USER_API_END_POINT}/profile/update`, // Replace with your actual API URL
         formData,
         {
           headers: {
@@ -167,13 +173,22 @@ function UpdateProfileDialog({ open, setOpen }) {
                 onChange={fileChangeHandler}
                 id="profileImage"
                 className="col-span-3"
+                accept="image/*"
+                name="profilePhoto"
               />
             </div>
 
             {/* File Upload */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="file">Resume</Label>
-              <Input type="file" onChange={fileChangeHandler} id="file" className="col-span-3" />
+              <Input
+                type="file"
+                onChange={fileChangeHandler}
+                id="file"
+                name="resume"
+                accept="application/pdf"
+                className="col-span-3"
+              />
             </div>
 
             {/* Submit Button */}
