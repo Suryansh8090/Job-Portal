@@ -6,12 +6,18 @@ import Jobs from "@/home/NavComponent/Jobs/Jobs";
 import Browse from "@/home/NavComponent/Browse/Browse";
 import Profile from "@/profile/Profile";
 import JobsDescription from "@/home/NavComponent/Jobs/JobsDescription";
+import Companies from "@/admin/Companies";
+import CreateCompany from "@/admin/CreateCompany";
+import CompanySetup from "@/admin/CompanySetup";
+import AdminJobs from "@/admin/AdminJobs";
+import PostJob from "@/admin/PostJob";
 
 const appRoute = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
   },
+
   {
     path: "/login",
     element: <Login />,
@@ -26,7 +32,7 @@ const appRoute = createBrowserRouter([
   },
   {
     path: "/description/:id",
-    element: <JobsDescription/>,
+    element: <JobsDescription />,
   },
   {
     path: "/browse",
@@ -36,6 +42,26 @@ const appRoute = createBrowserRouter([
     path: "/profile",
     element: <Profile />,
   },
+  {
+    path: "/companies",
+    element: <Companies />,
+  },
+  {
+    path: "/admin/companies/create",
+    element: <CreateCompany />,
+  },
+  {
+    path: "/admin/companies/:id",
+    element: <CompanySetup />,
+  },
+  {
+    path: "/admin/jobs",
+    element: <AdminJobs/>
+  },
+  {
+    path: "/admin/jobs/create",
+    element: <PostJob/>
+  }
 ]);
 
 export default appRoute;

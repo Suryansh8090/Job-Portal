@@ -12,26 +12,28 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios";
 import { setUser } from "@/public/authslice";
-import  USER_API_END_POINT from "@/utils/constant"
+import USER_API_END_POINT from "@/utils/constant";
 
 function Navbar() {
   const { user } = useSelector((store) => store.auth);
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const logoutHandler = async () => {
     try {
-      const res = await axios.post(`${USER_API_END_POINT}/logout`, {withCredentials: true})
+      const res = await axios.post(`${USER_API_END_POINT}/logout`, {
+        withCredentials: true,
+      });
       if (res.data.success) {
-        dispatch(setUser(null))
-        navigate("/")
-        toast.success(res.data.message)
+        dispatch(setUser(null)); // Reset user data
+        navigate("/"); // Redirect to home
+        toast.success(res.data.message); // Show success message
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message)
+      toast.error(error.response?.data?.message || "Logout failed"); // Show error message if logout fails
     }
-  }
+  };
 
   return (
     <div className="bg-[rgba(224,221,221,0.08)]">
@@ -42,17 +44,42 @@ function Navbar() {
           </h1>
         </div>
         <div className="flex items-center gap-10">
+          {/* Navigation links */}
           <ul className="flex items-center gap-6 font-medium cursor-pointer">
             <li>
-              <Link to={"/"}>Home</Link>
+              <Link to="/">Home</Link>
             </li>
-            <li>
-              <Link to={"/jobs"}>Jobs</Link>
-            </li>
-            <li>
-              <Link to={"/browse"}>Browse</Link>
-            </li>
+            {!user ? (
+              <>
+                <li>
+                  <Link to="/contact-us">Contact Us</Link>
+                </li>
+                <li>
+                  <a href="#aboutUs">About Us</a>
+                </li>
+              </>
+            ) : user.role === "student" ? (
+              <>
+                <li>
+                  <Link to="/jobs">Jobs</Link>
+                </li>
+                <li>
+                  <Link to="/browse">Browse</Link>
+                </li>
+              </>
+            ) : user.role === "recruiter" ? (
+              <>
+                <li>
+                  <Link to="/admin/jobs">Jobs</Link>
+                </li>
+                <li>
+                  <Link to="/companies">Companies</Link>
+                </li>
+              </>
+            ) : null}
           </ul>
+
+          {/* Authentication Buttons */}
           {!user ? (
             <div className="flex gap-1">
               <Link to="/login">
@@ -68,13 +95,17 @@ function Navbar() {
             <Popover>
               <PopoverTrigger asChild>
                 <Avatar className="cursor-pointer">
-                  <AvatarImage src={user?.profile?.profilePhoto} />
+                  <AvatarImage
+                    src={user?.profile?.profilePhoto || "/default-avatar.jpg"}
+                  />
                 </Avatar>
               </PopoverTrigger>
               <PopoverContent className="w-80">
                 <div className="flex gap-4 space-y-1">
-                  <Avatar className="cursor-pointer ">
-                    <AvatarImage src={user?.profile?.profilePhoto} />
+                  <Avatar className="cursor-pointer">
+                    <AvatarImage
+                      src={user?.profile?.profilePhoto || "/default-avatar.jpg"}
+                    />
                   </Avatar>
                   <div>
                     <h4 className="font-semibold">{user?.fullname}</h4>
@@ -92,8 +123,17 @@ function Navbar() {
                   </div>
                   <div className="flex w-fit items-center gap-1 cursor-pointer">
                     <LogOut />
-                    <Button onClick={logoutHandler} variant="link">Logout</Button>
+                    <Button onClick={logoutHandler} variant="link">
+                      Logout
+                    </Button>
                   </div>
+                  {user.role === "recruiter" && (
+                    <div className="flex w-fit items-center gap-1 cursor-pointer">
+                      <Button variant="link">
+                        <Link to="/admin/companies/create">Post a Job</Link>
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </PopoverContent>
             </Popover>

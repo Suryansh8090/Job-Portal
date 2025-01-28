@@ -2,6 +2,7 @@ import multer from "multer";
 
 const storage = multer.memoryStorage();
 
+export const singleUpload = multer({storage}).single("file")
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
@@ -25,6 +26,7 @@ export const uploadFields = upload.fields([
   { name: "resume", maxCount: 1 },
   { name: "profilePhoto", maxCount: 1 },
 ]);
+
 
 // Middleware for handling errors
 export const handleUploadErrors = (err, req, res, next) => {
