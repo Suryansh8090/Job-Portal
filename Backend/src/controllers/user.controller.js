@@ -161,11 +161,13 @@ const updateProfile = asyncHandler(async (req, res) => {
       const resume = req.files.resume[0];
       const resumeUri = getDataUri(resume);
       const resumeCloud = await cloudinary.uploader.upload(resumeUri.content, {
-       
         folder: "user_resumes",
         public_id: `resume_${user._id}`,
       });
-      user.profile.resume = resumeCloud.secure_url;
+      user.profile.resume = {
+        url: resumeCloud.secure_url,
+        originalName: resume.originalname,
+      };
     }
 
     await user.save();

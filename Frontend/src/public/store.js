@@ -19,6 +19,7 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import authReducer from "./authslice"; // Make sure your imports are named correctly
 import jobSlice from "./jobslice";
 import companySlice from "./companyslice";
+import applicationSlice from "./applicantionslice"
 import {
   persistStore,
   persistReducer,
@@ -41,6 +42,7 @@ const rootReducer = combineReducers({
   auth: authReducer, // Ensure this matches the default export in authslice.js
   job: jobSlice,
   company: companySlice,
+  application: applicationSlice
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

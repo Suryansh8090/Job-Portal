@@ -8,8 +8,10 @@ import React, { useState } from "react";
 import AppliedJob from "./components/AppliedJobTable";
 import UpdateProfileDialog from "./components/UpdateProfileDialog";
 import { useSelector } from "react-redux";
+import useGetAllAppliedJobs from "@/customhooks/useGetAllAppliedJob";
 
 function Profile() {
+  useGetAllAppliedJobs()
   const [open, setOpen] = useState(false);
   const { user } = useSelector((store) => store.auth); // Fetch user from Redux state
 

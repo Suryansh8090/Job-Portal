@@ -77,7 +77,13 @@ function PositionTable() {
               <TableCell>{company?.name || "N/A"}</TableCell>
 
               <TableCell>
-                {company?.createdAt ? company.createdAt.split("T")[0] : "N/A"}
+                {company?.createdAt
+                  ? company.createdAt
+                      .split("T")[0]
+                      .split("-")
+                      .reverse()
+                      .join("/")
+                  : "N/A"}
               </TableCell>
               <TableCell className="text-right">
                 <Popover>

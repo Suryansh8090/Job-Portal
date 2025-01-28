@@ -36,6 +36,8 @@ function AdminJobsTable() {
     setFilterJobs(filtered);
   }, [allAdminJobs, searchJobByText]);
 
+
+  
   return (
     <div>
       <Table>
@@ -55,7 +57,11 @@ function AdminJobsTable() {
                 <TableCell>{job?.company?.name}</TableCell>
                 <TableCell>{job?.title}</TableCell>
                 <TableCell>
-                  {new Date(job?.createdAt).toLocaleDateString()}{" "}
+                  {new Date(job?.createdAt).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
                   {/* More robust date formatting */}
                 </TableCell>
                 <TableCell className="text-right cursor-pointer">
@@ -65,21 +71,21 @@ function AdminJobsTable() {
                     </PopoverTrigger>
                     <PopoverContent className="w-32">
                       <div
-                        // onClick={() => navigate(`/admin/companies/${job._id}`)}
+                        onClick={() => navigate(`/admin/jobs/${job?._id}`)}
                         className="flex items-center gap-2 w-fit cursor-pointer"
                       >
                         <Edit2 className="w-4" />
                         <span>Edit</span>
                       </div>
-                      {/* <div
+                      <div
                         onClick={() =>
-                          navigate(`/admin/jobs/${job._id}/applicants`)
+                          navigate(`/admin/jobs/${job?._id}/applicants`)
                         }
                         className="flex items-center w-fit gap-2 cursor-pointer mt-2"
                       >
                         <Eye className="w-4" />
                         <span>Applicants</span>
-                      </div> */}
+                      </div>
                     </PopoverContent>
                   </Popover>
                 </TableCell>
