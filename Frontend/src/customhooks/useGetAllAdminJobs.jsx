@@ -2,7 +2,7 @@ import { setAllAdminJobs } from "@/public/jobslice";
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { JOB_API_END_POINT } from "@/utils/constant";
+import { JOB_API_END_POINT } from "@/utils/constant"; // Assuming JOB_API_END_POINT is defined in your constants
 
 function useGetAllAdminJobs() {
   const dispatch = useDispatch();
@@ -10,6 +10,7 @@ function useGetAllAdminJobs() {
   useEffect(() => {
     const fetchAllAdminJobs = async () => {
       try {
+        // Fetching the token from localStorage
         const token = localStorage.getItem("token");
 
         if (!token) {
@@ -17,19 +18,18 @@ function useGetAllAdminJobs() {
           return;
         }
 
-        // Make the request
+        // Make the API request to fetch jobs
         const res = await axios.get(`${JOB_API_END_POINT}/getadminjobs`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          withCredentials: true,
+          withCredentials: true, // This ensures cookies are sent along with the request if needed
         });
-        // Log the entire response to check its structure
-        //  console.log("API Response:", res.data);
 
-        // Check for the expected key and handle accordingly
+        // Check if the response is successful and contains job data
         if (res.data.success && res.data.data) {
-          dispatch(setAllAdminJobs(res.data.data)); // Assuming allJobs is the key where job data is stored
+          // Dispatch jobs data to Redux store
+          dispatch(setAllAdminJobs(res.data.data));
         } else {
           console.error(
             "No job data found:",
@@ -37,11 +37,16 @@ function useGetAllAdminJobs() {
           );
         }
       } catch (error) {
+        // Log any errors encountered during the API request
         console.error("Error fetching admin jobs: ", error.message);
       }
     };
+
+    // Trigger the fetch function
     fetchAllAdminJobs();
   }, [dispatch]);
+
+  // Returning nothing since the hook is only fetching data and dispatching to the store
 }
 
 export default useGetAllAdminJobs;

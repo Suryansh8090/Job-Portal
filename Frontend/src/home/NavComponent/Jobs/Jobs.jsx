@@ -11,9 +11,7 @@ function Jobs() {
   const dispatch = useDispatch();
   const { allJobs } = useSelector((store) => store.job);
 
- 
-
-  useEffect(() => {
+  const fetchJobs = () => {
     const token = localStorage.getItem("token"); // Or get it from Redux store
     axios
       .get(`${JOB_API_END_POINT}/get/`, {
@@ -22,8 +20,6 @@ function Jobs() {
         },
       })
       .then((response) => {
-        // Log the response data to check the structure
-       // console.log("Response Data:", response.data);
         if (Array.isArray(response.data.data)) {
           dispatch(setAllJobs(response.data.data)); // Dispatch the data to Redux store
         } else {
@@ -31,9 +27,31 @@ function Jobs() {
         }
       })
       .catch((error) => {
-        console.error("Error fetching jobs:", error); // Handle errors
+        console.error("Error fetching jobs:", error);
       });
+  };
+
+  useEffect(() => {
+    fetchJobs(); // Fetch the jobs when the component mounts
   }, [dispatch]);
+
+  const handleDeleteJob = (jobId) => {
+    const token = localStorage.getItem("token");
+
+    axios
+      .delete(`${JOB_API_END_POINT}/delete/${jobId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
+        // After deletion, refetch jobs to update UI
+        fetchJobs();
+      })
+      .catch((error) => {
+        console.error("Error deleting job:", error);
+      });
+  };
 
   return (
     <>
@@ -43,13 +61,12 @@ function Jobs() {
           <div className="w-20%">
             <FilterCard />
           </div>
-          {/* Check if allJobs is an array and has items */}
           {Array.isArray(allJobs) && allJobs.length > 0 ? (
             <div className="flex-1 h-[88vh] overflow-y-auto pb-5">
               <div className="grid grid-cols-3 gap-4">
                 {allJobs.map((job) => (
                   <div key={job?._id}>
-                    <SingleJob job={job} />
+                    <SingleJob job={job} onDelete={handleDeleteJob} />
                   </div>
                 ))}
               </div>

@@ -22,29 +22,35 @@ function PositionTable() {
   const { companies = [], searchCompanyByText } = useSelector(
     (store) => store.company
   ); // Ensure default array to avoid errors
-
+  const userId = useSelector((store) => store.auth.user?._id); // Fetch userId from auth state
   const navigate = useNavigate();
   const [filteredCompanies, setFilteredCompanies] = useState(companies || []);
-
-  // Filter companies based on search input
+  
+  // Filter companies based on userId and search input
   useEffect(() => {
+    console.log("Companies have changed", companies);
     if (Array.isArray(companies)) {
       const filtered = companies.filter((company) => {
-        if (!searchCompanyByText) return true; // If no search text, return all companies
-        return company?.name
-          ?.toLowerCase()
-          .includes(searchCompanyByText.toLowerCase());
+        
+        // Only show companies that are posted by the current user
+        if (company?.userId === userId) {
+          if (!searchCompanyByText) return true; // If no search text, return the company
+          return company?.name
+            ?.toLowerCase()
+            .includes(searchCompanyByText.toLowerCase());
+        }
+        return false; // Only show companies posted by the user
       });
       setFilteredCompanies(filtered);
     } else {
       console.error("companies is not an array:", companies);
       setFilteredCompanies([]); // Default to empty array
     }
-  }, [companies, searchCompanyByText]);
+  }, [companies, searchCompanyByText, userId]);
 
   return (
     <Table>
-      <TableCaption>A list of your recent posted Vacancies</TableCaption>
+      <TableCaption>A list of your recently posted Vacancies</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Logo</TableHead>

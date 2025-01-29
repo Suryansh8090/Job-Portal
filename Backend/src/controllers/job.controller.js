@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Job } from "../models/job.models.js";
 import { User } from "../models/user.models.js";
+import { Types } from "mongoose";
 
 const postJob = asyncHandler(async (req, res) => {
   try {
@@ -58,6 +59,7 @@ const postJob = asyncHandler(async (req, res) => {
 const getAllJobs = asyncHandler(async (req, res) => {
   try {
     const keyword = req.query.keyword || "";
+    console.log("Search Keyword:", keyword);
     const query = {
       $or: [
         { title: { $regex: keyword, $options: "i" } },
@@ -66,7 +68,7 @@ const getAllJobs = asyncHandler(async (req, res) => {
     };
 
     const jobs = await Job.find(query).populate('company');
-
+    console.log("Jobs fetched:", jobs);
     if (!jobs || jobs.length === 0) {
       throw new ApiError(404, "No jobs found for the given keyword.");
     }
@@ -81,6 +83,11 @@ const getAllJobs = asyncHandler(async (req, res) => {
 const getJobById = asyncHandler(async (req, res) => {
   try {
     const jobId = req.params.id;
+
+     // Validate if jobId is a valid ObjectId
+     if (!Types.ObjectId.isValid(jobId)) {
+      throw new ApiError(400, "Invalid Job ID format.");
+    }
     const job = await Job.findById(jobId).populate({
       path: "applications",
     });
@@ -116,4 +123,28 @@ const getAllAdminPostedJobs = asyncHandler(async (req, res) => {
   }
 });
 
-export { postJob, getAllJobs, getJobById, getAllAdminPostedJobs };
+
+const deleteJob = asyncHandler(async (req, res) => {
+  try {
+    const jobId = req.params.id;
+
+    // Validate if jobId is a valid ObjectId
+    if (!Types.ObjectId.isValid(jobId)) {
+      throw new ApiError(400, "Invalid Job ID format.");
+    }
+
+    // Delete the job from the database
+    const deletedJob = await Job.findByIdAndDelete(jobId);
+
+    if (!deletedJob) {
+      throw new ApiError(404, "Job not found.");
+    }
+
+    return res.status(200).json(new ApiResponse(200, null, "Job deleted successfully!"));
+  } catch (error) {
+    console.error("Error deleting job:", error);
+    throw new ApiError(500, "Failed to delete the job. Please try again later.", error);
+  }
+});
+
+export { postJob, getAllJobs, getJobById, getAllAdminPostedJobs, deleteJob };

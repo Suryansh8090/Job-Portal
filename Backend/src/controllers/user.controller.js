@@ -5,6 +5,7 @@ import { User } from "../models/user.models.js";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
 
+
 const generateAccessToken = async function (userId) {
   try {
     const user = await User.findById(userId);
@@ -16,6 +17,8 @@ const generateAccessToken = async function (userId) {
   }
 };
 
+
+
 const registerUser = asyncHandler(async (req, res) => {
   const { fullname, email, phoneNumber, password, role } = req.body;
 
@@ -23,6 +26,14 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Missing user credentials.");
   }
 
+
+
+  // Validate email format using a regex pattern
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  if (!emailRegex.test(email)) {
+    throw new ApiError(400, "Invalid email format.");
+  }
+  
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw new ApiError(409, "User already exists with this email.");
@@ -55,6 +66,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (!createdUser) {
     throw new ApiError(500, "Error registering the user.");
   }
+
 
   res
     .status(201)

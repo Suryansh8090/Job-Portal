@@ -1,8 +1,4 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Table,
   TableBody,
@@ -14,30 +10,66 @@ import {
 } from "@/components/ui/table";
 import { Edit2, MoreHorizontal, Eye } from "lucide-react"; // Added Eye import
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import fetchAllJobs from "../public/jobslice"; // Assuming this action exists for fetching jobs
+
 
 function AdminJobsTable() {
   const { allAdminJobs, searchJobByText } = useSelector((store) => store.job);
+  const user = useSelector((store) => store.auth.user);
+   // Get the user object
   const navigate = useNavigate();
-  const [filterJobs, setFilterJobs] = useState(allAdminJobs);
+  const dispatch = useDispatch();
+  const [filterJobs, setFilterJobs] = useState(allAdminJobs || []); // Initialize with an empty array if no jobs
+  const [loading, setLoading] = useState(true); // To handle loading state
+  const [error, setError] = useState(null); // To handle errors
 
-  // Filter jobs based on search input
-  useEffect(() => {
-    const filtered = allAdminJobs.filter((job) => {
-      if (!searchJobByText) return true; // If no search text, return all jobs
-      return (
-        job?.company?.name
-          ?.toLowerCase()
-          .includes(searchJobByText.toLowerCase()) ||
-        job?.title?.toLowerCase().includes(searchJobByText.toLowerCase())
-      );
-    });
-    setFilterJobs(filtered);
-  }, [allAdminJobs, searchJobByText]);
+  // Check if user is available from localStorage or redux state
+  if (!user) {
+    return <div>Loading user data...</div>; // Show loading state while user data is fetched
+  }
 
-
+  const userId = user?._id; // Now it's safe to access userId since user exists
   
+  // Fetch jobs if not already loaded and filter based on search and userId
+  useEffect(() => {
+    if (!allAdminJobs || allAdminJobs.length === 0) {
+      dispatch(fetchAllJobs()); // Fetch jobs if not already available
+    }
+  }, [allAdminJobs, dispatch]);
+
+  useEffect(() => {
+    if (allAdminJobs.length > 0) {
+      // Filter jobs based on userId and search text
+      const filtered = allAdminJobs.filter((job) => {
+        if (job.created_by === userId) {
+          if (!searchJobByText) return true; // If no search text, show the job
+          return (
+            job?.company?.name?.toLowerCase().includes(searchJobByText.toLowerCase()) ||
+            job?.title?.toLowerCase().includes(searchJobByText.toLowerCase())
+          );
+        }
+        return false; // Only show jobs posted by the current user
+      });
+
+      setFilterJobs(filtered); // Update filtered jobs state
+      setLoading(false); // Set loading to false once jobs are filtered
+    } else {
+      setError("No jobs found for the admin.");
+      setLoading(false); // Set loading to false if no jobs found
+    }
+  }, [allAdminJobs, searchJobByText, userId]);
+
+  // Handle loading, error, and display job details
+  if (loading) {
+    return <div>Loading...</div>; // Show loading message while fetching data
+  }
+
+  if (error) {
+    return <div>{error}</div>; // Display error message if no jobs found
+  }
+
   return (
     <div>
       <Table>
@@ -62,7 +94,6 @@ function AdminJobsTable() {
                     month: "2-digit",
                     year: "numeric",
                   })}
-                  {/* More robust date formatting */}
                 </TableCell>
                 <TableCell className="text-right cursor-pointer">
                   <Popover>
@@ -94,7 +125,7 @@ function AdminJobsTable() {
           ) : (
             <TableRow>
               <TableCell colSpan="4" className="text-center">
-                No jobs found
+                YOU have not posted any job yet!
               </TableCell>
             </TableRow>
           )}

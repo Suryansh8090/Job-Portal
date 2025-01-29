@@ -52,10 +52,7 @@ function Navbar() {
             {!user ? (
               <>
                 <li>
-                  <Link to="/contact-us">Contact Us</Link>
-                </li>
-                <li>
-                  <a href="#aboutUs">About Us</a>
+                 <a href="#aboutus">About Us</a>
                 </li>
               </>
             ) : user.role === "student" ? (

@@ -13,9 +13,7 @@ function Home() {
     <>
       <Navbar />
       <HeroSection />
-      {/* <CategoryCarousel /> */}
-      {/* <LatestJobs /> */}
-      <Footer />
+      
     </>
   );
 }

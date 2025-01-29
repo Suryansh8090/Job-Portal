@@ -75,7 +75,7 @@ function Signup() {
         toast.error("An unexpected error occurred. Please try again.");
       }
     } finally {
-      useDispatch(setLoading(false));
+      dispatch(setLoading(false));
     }
     useEffect(() => {
       if (user) {

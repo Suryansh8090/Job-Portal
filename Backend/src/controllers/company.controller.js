@@ -133,4 +133,7 @@ const getCompanyById = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerCompany, getCompany, getCompanyById, updateCompany };
+
+
+
+export { registerCompany, getCompany, getCompanyById, updateCompany, };

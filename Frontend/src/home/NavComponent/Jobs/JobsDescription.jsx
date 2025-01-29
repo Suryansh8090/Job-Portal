@@ -24,7 +24,7 @@ function JobsDescription() {
       setLoading(true); // Set loading to true when starting to fetch data
       try {
         const token = localStorage.getItem("token"); // Fetch the token from storage
-        console.log("Fetching job with ID:", jobId); // Debug log
+       // console.log("Fetching job with ID:", jobId); // Debug log
         const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Add token to the request header if using JWT
@@ -32,12 +32,12 @@ function JobsDescription() {
           withCredentials: true, // Ensure cookies are sent with the request if needed
         });
 
-        console.log("Job fetched:", res.data); // Debug log to check the API response
+       // console.log("Job fetched:", res.data); // Debug log to check the API response
 
         if (res.data.success) {
           // Dispatch job data to Redux
           dispatch(setSingleJob(res.data.data)); // Ensure the correct data structure is used
-          console.log("After dispatching, singlejob:", res.data.data); // Check if it's dispatched correctly
+         // console.log("After dispatching, singlejob:", res.data.data); // Check if it's dispatched correctly
 
           setIsApplied(
             res.data.data.applications?.some(
@@ -48,7 +48,7 @@ function JobsDescription() {
           toast.error("Job not found or error occurred");
         }
       } catch (error) {
-        console.log("Error:", error); // Debug log for error
+        console.log("API Error:", error); // Debug log for error
         toast.error(
           error.response?.data?.message || "Failed to fetch job details."
         );
@@ -102,13 +102,13 @@ function JobsDescription() {
             <h1 className="font-bold text-xl">{singlejob?.title}</h1>
             <div className="flex items-center gap-2 mt-4">
               <Badge className={"text-blue-700 font-bold"} variant={"ghost"}>
-                {singlejob?.position}Position
+                {singlejob?.position} Position
               </Badge>
               <Badge className={"text-[#F83002] font-bold"} variant={"ghost"}>
                 {singlejob?.jobType}
               </Badge>
               <Badge className={"text-[#7209B7] font-bold"} variant={"ghost"}>
-                {singlejob?.salary}LPA
+                {singlejob?.salary} LPA
               </Badge>
             </div>
           </div>
