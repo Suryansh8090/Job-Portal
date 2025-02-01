@@ -1,20 +1,3 @@
-// // src/public/store.js
-// import { configureStore } from '@reduxjs/toolkit';
-// import authReducer from './authslice';  // Import auth slice reducer
-// import jobSlice from './jobslice'
-// import companySlice from './companyslice'
-
-// const store = configureStore({
-//   reducer: {
-//     auth: authReducer,  // Attach auth reducer to the store
-//     job:jobSlice,
-//     company:companySlice
-//   },
-// });
-
-// export default store;
-
-
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import authReducer from "./authslice"; // Make sure your imports are named correctly
 import jobSlice from "./jobslice";

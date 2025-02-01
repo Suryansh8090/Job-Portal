@@ -9,6 +9,7 @@ import { COMPANY_API_END_POINT } from "@/utils/constant";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { setSingleCompany } from "@/public/companyslice";
+import { motion } from "framer-motion"; // Import Framer Motion
 
 function CreateCompany() {
   const navigate = useNavigate();
@@ -22,13 +23,12 @@ function CreateCompany() {
     }
 
     try {
-     const token = localStorage.getItem("token");
-     // console.log(token);
-     
+      const token = localStorage.getItem("token");
+
       if (!token) {
         toast.error("You are not logged in. Please log in and try again.");
         return;
-      } 
+      }
 
       const res = await axios.post(
         `${COMPANY_API_END_POINT}/register`,
@@ -42,24 +42,19 @@ function CreateCompany() {
         }
       );
 
-     // console.log("API Response:", res.data); // Debugging: Log the response
-
       const company = res?.data?.message;
       const companyId = company?._id;
-     // console.log("Full API Response", res.data);
-     // console.log("CompanyId", companyId);
 
       if (res?.data?.success) {
         dispatch(setSingleCompany(company));
         toast.success(
           res?.data?.message?.text || "Company registered successfully!"
-        ); // Use proper success message
+        );
 
         if (companyId) {
-          // Delay navigation until after the toast is shown
           setTimeout(() => {
             navigate(`/admin/companies/${companyId}`);
-          }, 500); // Add a small delay for the toast to show up
+          }, 500);
         } else {
           toast.error("Failed to retrieve company ID.");
         }
@@ -75,10 +70,15 @@ function CreateCompany() {
   return (
     <>
       <Navbar />
-      <div className="max-w-4xl mx-auto">
+      <motion.div
+        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="my-10">
-          <h1 className="font-bold text-2xl">Your Company Name</h1>
-          <p>
+          <h1 className="font-bold text-2xl sm:text-3xl">Your Company Name</h1>
+          <p className="text-gray-600">
             What would you like to give your company name? You can also change
             this later.
           </p>
@@ -89,14 +89,24 @@ function CreateCompany() {
           placeholder="Jobhunt, Microsoft"
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
+          className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 my-4"
         />
-        <div className="flex items-center gap-2 my-10">
-          <Button variant="outline" onClick={() => navigate("/companies")}>
+        <div className="flex flex-col sm:flex-row gap-4 my-10 justify-between sm:items-center">
+          <Button
+            variant="outline"
+            onClick={() => navigate("/companies")}
+            className="w-full sm:w-auto"
+          >
             Cancel
           </Button>
-          <Button onClick={registerCompany}>Continue</Button>
+          <Button
+            onClick={registerCompany}
+            className="w-full sm:w-auto bg-blue-600 text-white hover:bg-blue-700"
+          >
+            Continue
+          </Button>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 }

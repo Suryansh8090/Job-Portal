@@ -12,21 +12,22 @@ import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "@/public/authslice";
 import { Loader2 } from "lucide-react";
+import { motion } from "framer-motion"; // Import framer-motion for animations
 
 function Login() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
   const [input, setInput] = useState({
     email: "",
     password: "",
     role: "",
   });
 
-  const { loading, user } = useSelector((store) => store.auth);
+  const { loading, user } = useSelector((store) => store.auth); // Loading and user data from Redux
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const changeEventHandler = (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
+    setInput({ ...input, [e.target.name]: e.target.value }); // Handle input changes
   };
 
   const submitHandler = async (e) => {
@@ -42,14 +43,14 @@ function Login() {
       });
 
       if (res.data.success) {
-        // Save the token to localStorage
+        // Save the token to localStorage and sessionStorage
         const token = res.data.accessToken;
         if (token) {
           localStorage.setItem("token", token);
-          sessionStorage.setItem("token", token); // Store token in sessionStorage
-          sessionStorage.setItem("user", JSON.stringify(res.data.user)); // Store user data in sessionStorage
-          dispatch(setUser(res.data.user));
-          navigate("/"); // Redirect to home after login
+          sessionStorage.setItem("token", token);
+          sessionStorage.setItem("user", JSON.stringify(res.data.user));
+          dispatch(setUser(res.data.user)); // Store user data in Redux
+          navigate("/"); // Redirect to home after successful login
           toast.success(res.data.message);
         } else {
           toast.error("Token not received. Please try again.");
@@ -64,7 +65,7 @@ function Login() {
         console.log("Error:", error.message);
         toast.error("An unexpected error occurred. Please try again.");
       }
-      // Clear any existing session data if login fails
+      // Clear any session data if login fails
       sessionStorage.removeItem("token");
       localStorage.removeItem("token");
     } finally {
@@ -81,17 +82,23 @@ function Login() {
   return (
     <>
       <Navbar />
-      <div className="flex h-screen ">
+      <div className="flex h-screen">
         {/* Right Side: Image */}
-        <div
+        <motion.div
           className="hidden lg:flex w-1/3 rounded-full bg-cover bg-center ml-10 mb-5 mt-10"
-          style={{
-            backgroundImage: `url(${Img})`,
-          }}
-        ></div>
+          style={{ backgroundImage: `url(${Img})` }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        ></motion.div>
 
         {/* Left Side: Form */}
-        <div className="flex flex-1 items-center justify-center p-6 bg-white mb-10 h-full mt-0">
+        <motion.div
+          className="flex flex-1 items-center justify-center p-6 bg-white mb-10 h-full mt-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
           <div className="w-full max-w-md border border-gray-400 p-5 rounded-lg ml-7">
             <h2 className="text-3xl font-bold text-gray-800 text-center">
               Login
@@ -121,6 +128,7 @@ function Login() {
                   required
                 />
               </div>
+
               {/* Password Input */}
               <div className="relative">
                 <Label
@@ -177,8 +185,9 @@ function Login() {
                   )}
                 </button>
               </div>
+
               {/* Role Input */}
-              <div className="flex items-center gap-2 ">
+              <div className="flex items-center gap-2">
                 <h1 className="mb-1">Role:</h1>
                 <RadioGroup defaultValue="comfortable" className="flex">
                   <div className="flex items-center space-x-1">
@@ -205,6 +214,7 @@ function Login() {
                   </div>
                 </RadioGroup>
               </div>
+
               {/* Login Button */}
               {loading ? (
                 <Button className="flex items-center justify-center w-full bg-blue-600 text-white hover:bg-blue-700">
@@ -231,7 +241,7 @@ function Login() {
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </>
   );

@@ -19,7 +19,6 @@ import USER_API_END_POINT from "@/utils/constant";
 function UpdateProfileDialog({ open, setOpen }) {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-
   const { user } = useSelector((store) => store.auth); // Get user data from Redux store
 
   const [input, setInput] = useState({
@@ -27,8 +26,9 @@ function UpdateProfileDialog({ open, setOpen }) {
     email: user?.email || "",
     phoneNumber: user?.phoneNumber || "",
     bio: user?.profile?.bio || "",
-    skills: user?.profile?.skills || [],
+    skills: user?.profile?.skills.join(", ") || "",
     file: user?.profile?.resume || null,
+    profilePhoto: user?.profile?.profilePhoto || null,
   });
 
   const changeEventHandler = (e) => {
@@ -37,11 +37,7 @@ function UpdateProfileDialog({ open, setOpen }) {
 
   const fileChangeHandler = (e) => {
     const file = e.target.files?.[0];
-    if (e.target.name === "profilePhoto") {
-      setInput({ ...input, profilePhoto: file }); // Update profile image
-    } else if (e.target.name === "resume") {
-      setInput({ ...input, resume:file }); // Update resume file
-    }
+    setInput({ ...input, [e.target.name]: file });
   };
 
   const submitHandler = async (e) => {
@@ -58,18 +54,17 @@ function UpdateProfileDialog({ open, setOpen }) {
     formData.append("email", input.email);
     formData.append("phoneNumber", input.phoneNumber);
     formData.append("bio", input.bio);
-    formData.append("skills", input.skills);
-    if (input.profilePhoto) {
-      formData.append("profilePhoto", input.profilePhoto); // Append profile image
-    }
-    if (input.resume) {
-      formData.append("resume", input.resume);
-    }
+    formData.append(
+      "skills",
+      input.skills.split(", ").map((skill) => skill.trim())
+    );
+    if (input.profilePhoto) formData.append("profilePhoto", input.profilePhoto);
+    if (input.file) formData.append("resume", input.file);
 
     try {
-      setLoading(true); // Show loading state
+      setLoading(true);
       const res = await axios.post(
-        `${USER_API_END_POINT}/profile/update`, // Replace with your actual API URL
+        `${USER_API_END_POINT}/profile/update`,
         formData,
         {
           headers: {
@@ -80,17 +75,31 @@ function UpdateProfileDialog({ open, setOpen }) {
       );
 
       if (res.data.success) {
-        dispatch(setUser(res.data.data)); // Update user in Redux store with the response data
+        dispatch(setUser(res.data.data));
         toast.success(res.data.message);
       }
     } catch (error) {
       console.log(error);
       toast.error(error.response?.data?.message || "An error occurred");
     } finally {
-      setLoading(false); // Reset loading state
-      setOpen(false); // Close the dialog
+      setLoading(false);
+      setOpen(false);
     }
   };
+
+  const renderInputField = (label, type, name, value) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Label htmlFor={name}>{label}</Label>
+      <Input
+        type={type}
+        name={name}
+        value={value}
+        onChange={changeEventHandler}
+        id={name}
+        className="col-span-3 w-full"
+      />
+    </div>
+  );
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
@@ -99,95 +108,59 @@ function UpdateProfileDialog({ open, setOpen }) {
           <DialogTitle>Update Profile</DialogTitle>
         </DialogHeader>
         <form onSubmit={submitHandler}>
-          <div className="grid gap-4 py-4">
-            {/* Full name */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="fullname">Full Name</Label>
-              <Input
-                type="text"
-                name="fullname"
-                value={input.fullname}
-                onChange={changeEventHandler}
-                id="fullname"
-                className="col-span-3"
-              />
-            </div>
+          <div className="grid gap-4 py-2">
+            {renderInputField("Full Name", "text", "fullname", input.fullname)}
+            {renderInputField("Email", "email", "email", input.email)}
+            {renderInputField(
+              "Phone Number",
+              "text",
+              "phoneNumber",
+              input.phoneNumber
+            )}
+            {renderInputField("Bio", "text", "bio", input.bio)}
 
-            {/* Email */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                type="email"
-                name="email"
-                value={input.email}
-                onChange={changeEventHandler}
-                id="email"
-                className="col-span-3"
-              />
-            </div>
+            {/* Only show Skills and Resume fields if the user is NOT a recruiter */}
+            {user?.role !== "recruiter" && (
+              <>
+                {/* Skills Input */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <Label htmlFor="skills">Skills</Label>
+                  <Input
+                    type="text"
+                    name="skills"
+                    value={input.skills}
+                    onChange={changeEventHandler}
+                    id="skills"
+                    className="col-span-3 w-full"
+                    placeholder="Comma separated"
+                  />
+                </div>
 
-            {/* Phone Number */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
-              <Input
-                type="text"
-                name="phoneNumber"
-                value={input.phoneNumber}
-                onChange={changeEventHandler}
-                id="phoneNumber"
-                className="col-span-3"
-              />
-            </div>
-
-            {/* Bio */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="bio">Bio</Label>
-              <Input
-                type="text"
-                name="bio"
-                value={input.bio}
-                onChange={changeEventHandler}
-                id="bio"
-                className="col-span-3"
-              />
-            </div>
-
-            {/* Skills */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="skills">Skills</Label>
-              <Input
-                type="text"
-                name="skills"
-                value={input.skills}
-                onChange={changeEventHandler}
-                id="skills"
-                className="col-span-3"
-              />
-            </div>
+                {/* Resume Upload */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <Label htmlFor="resume">Resume</Label>
+                  <Input
+                    type="file"
+                    onChange={fileChangeHandler}
+                    id="resume"
+                    name="resume"
+                    accept="application/pdf"
+                    className="col-span-3 w-full"
+                  />
+                </div>
+              </>
+            )}
 
             {/* Profile Image */}
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <Label htmlFor="profileImage">Profile Image</Label>
               <Input
                 type="file"
                 onChange={fileChangeHandler}
                 id="profileImage"
-                className="col-span-3"
+                className="col-span-3 w-full"
                 accept="image/*"
                 name="profilePhoto"
-              />
-            </div>
-
-            {/* File Upload */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="file">Resume</Label>
-              <Input
-                type="file"
-                onChange={fileChangeHandler}
-                id="file"
-                name="resume"
-                accept="application/pdf"
-                className="col-span-3"
               />
             </div>
 

@@ -9,6 +9,7 @@ import { setSingleJob } from "@/public/jobslice";
 import { toast } from "sonner";
 import { JOB_API_END_POINT } from "@/utils/constant";
 import { APPLICATION_API_END_POINT } from "@/utils/constant";
+import { motion } from "framer-motion"; // Import Framer Motion for animation
 
 function JobsDescription() {
   const [isApplied, setIsApplied] = useState(false);
@@ -19,26 +20,21 @@ function JobsDescription() {
   const { user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
 
+  // Fetch the job details when component mounts
   useEffect(() => {
     const fetchSingleJob = async () => {
       setLoading(true); // Set loading to true when starting to fetch data
       try {
-        const token = localStorage.getItem("token"); // Fetch the token from storage
-       // console.log("Fetching job with ID:", jobId); // Debug log
+        const token = localStorage.getItem("token");
         const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, {
           headers: {
-            Authorization: `Bearer ${token}`, // Add token to the request header if using JWT
+            Authorization: `Bearer ${token}`,
           },
-          withCredentials: true, // Ensure cookies are sent with the request if needed
+          withCredentials: true,
         });
 
-       // console.log("Job fetched:", res.data); // Debug log to check the API response
-
         if (res.data.success) {
-          // Dispatch job data to Redux
-          dispatch(setSingleJob(res.data.data)); // Ensure the correct data structure is used
-         // console.log("After dispatching, singlejob:", res.data.data); // Check if it's dispatched correctly
-
+          dispatch(setSingleJob(res.data.data)); // Dispatch the job data to Redux store
           setIsApplied(
             res.data.data.applications?.some(
               (application) => application.applicant === user?._id
@@ -48,7 +44,6 @@ function JobsDescription() {
           toast.error("Job not found or error occurred");
         }
       } catch (error) {
-        console.log("API Error:", error); // Debug log for error
         toast.error(
           error.response?.data?.message || "Failed to fetch job details."
         );
@@ -60,14 +55,15 @@ function JobsDescription() {
     fetchSingleJob();
   }, [jobId, dispatch, user?._id]);
 
+  // Handler to apply for the job
   const applyJobHandler = async () => {
     try {
-      const token = localStorage.getItem("token"); // Fetch the token from storage
+      const token = localStorage.getItem("token");
       const res = await axios.get(
         `${APPLICATION_API_END_POINT}/apply/${jobId}`,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Add token to the request header if using JWT
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }
@@ -86,7 +82,6 @@ function JobsDescription() {
         toast.success(res.data.data);
       }
     } catch (error) {
-      console.log(error);
       toast.error(
         error.response?.data?.message || "Failed to apply for the job."
       );
@@ -97,7 +92,12 @@ function JobsDescription() {
     <>
       <Navbar />
       <div className="max-w-7xl mx-auto my-10">
-        <div className="flex items-center justify-between">
+        <motion.div
+          className="flex items-center justify-between"
+          initial={{ opacity: 0 }} // Initial opacity when component loads
+          animate={{ opacity: 1 }} // Fade-in effect when visible
+          transition={{ duration: 0.5 }} // Smooth transition for fade-in
+        >
           <div>
             <h1 className="font-bold text-xl">{singlejob?.title}</h1>
             <div className="flex items-center gap-2 mt-4">
@@ -129,10 +129,12 @@ function JobsDescription() {
                 : "Apply Now"}
             </Button>
           </div>
-        </div>
+        </motion.div>
+
         <h1 className="border-b-2 border-b-gray-300 font-semibold py-4">
           Job Description
         </h1>
+
         {singlejob ? (
           <div className="my-4">
             <h1 className="font-bold my-1">

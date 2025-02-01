@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Bookmark } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion"; // Import Framer Motion for animation
 
 function SingleJob({ job, onDelete }) {
   const navigate = useNavigate();
 
+  // Function to calculate the number of days ago from the job's creation date
   const daysAgoFunction = (mongodbTime) => {
     const createdAt = new Date(mongodbTime);
     const currentTime = new Date();
@@ -15,26 +17,20 @@ function SingleJob({ job, onDelete }) {
     return Math.floor(timeDifference / (1000 * 24 * 60 * 60));
   };
 
-  const handleDeleteClick = () => {
-    if (onDelete) {
-      onDelete(job._id); // Call the delete function passed from parent
-    }
-  };
-
   return (
-    <div className="p-5 rounded-md shadow-xl bg-white border border-gray-100">
+    <motion.div 
+      className="p-5 rounded-md shadow-xl bg-white border border-gray-100"
+      initial={{ opacity: 0 }} // Initial opacity when the component is loaded
+      animate={{ opacity: 1 }} // Fade-in effect when visible
+      transition={{ duration: 0.5 }} // Smooth transition for fade-in
+    >
       <div className="flex justify-between items-center">
         <p className="text-md text-gray-500 font-semibold">
           {daysAgoFunction(job?.createdAt) === 0
             ? "Today"
             : `${daysAgoFunction(job?.createdAt)} days ago`}
         </p>
-        <Button
-          variant="outline"
-          className="rounded-full"
-          size="icon"
-          onClick={handleDeleteClick}
-        >
+        <Button variant="outline" className="rounded-full" size="icon">
           <Bookmark />
         </Button>
       </div>
@@ -76,7 +72,7 @@ function SingleJob({ job, onDelete }) {
           Save For Later
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

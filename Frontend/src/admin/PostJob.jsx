@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { JOB_API_END_POINT } from "@/utils/constant";
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
+import { motion } from "framer-motion";  // Import Framer Motion
 
 function PostJob() {
   const [input, setInput] = useState({
@@ -32,13 +33,22 @@ function PostJob() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id: jobId } = useParams(); // Extract jobId from the URL
+
+  // Fetch Redux state
   const { companies } = useSelector((store) => store.company);
   const { allAdminJobs } = useSelector((store) => store.job);
+  const loggedInUser = useSelector((store) => store.auth?.user);
+  const loggedInUserId = loggedInUser?._id || loggedInUser?.id; // Ensure compatibility
+
+  // Filter companies belonging to the logged-in user
+  const userCompanies = companies?.filter(
+    (company) => company.userId === loggedInUserId
+  );
 
   // Fetch job data for editing
   useEffect(() => {
     if (jobId) {
-      const job = allAdminJobs.find((job) => job._id === jobId); // Try to fetch from Redux
+      const job = allAdminJobs.find((job) => job._id === jobId);
       if (job) {
         setInput({
           title: job.title || "",
@@ -52,7 +62,6 @@ function PostJob() {
           position: job.position || "",
         });
       } else {
-        // Fetch from the server if not found in Redux
         axios
           .get(`${JOB_API_END_POINT}/jobs/${jobId}`, {
             headers: {
@@ -85,21 +94,28 @@ function PostJob() {
   };
 
   const selectChangeHandler = (value) => {
-    const selectedCompany = companies.find(
-      (company) => company.name.toLowerCase() === value
-    );
-    setInput({ ...input, companyId: selectedCompany._id });
+    setInput({ ...input, companyId: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const selectedCompany = companies.find(
+      (company) => company._id === input.companyId
+    );
+
+    if (!selectedCompany || selectedCompany.userId !== loggedInUserId) {
+      toast.error("You can only post jobs for your own companies.");
+      return;
+    }
+
     try {
       setLoading(true);
 
       const url = jobId
         ? `${JOB_API_END_POINT}/jobs/${jobId}`
         : `${JOB_API_END_POINT}/post`;
-      const method = jobId ? "put" : "post"; // Use PUT for editing, POST for creating
+      const method = jobId ? "put" : "post";
 
       const res = await axios[method](url, input, {
         headers: {
@@ -125,8 +141,14 @@ function PostJob() {
     <>
       <Navbar />
       <div className="flex items-center justify-center my-10">
-        <form onSubmit={handleSubmit} className="p-8 shadow-lg rounded-md">
-          <div className="grid grid-cols-2 gap-3">
+        <motion.form
+          onSubmit={handleSubmit}
+          className="p-8 shadow-lg rounded-md w-full max-w-4xl"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Title</Label>
               <Input
@@ -134,29 +156,10 @@ function PostJob() {
                 name="title"
                 value={input.title}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1 w-full"
               />
             </div>
-            <div>
-              <Label>Description</Label>
-              <Input
-                type="text"
-                name="description"
-                value={input.description}
-                onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
-              />
-            </div>
-            <div>
-              <Label>Requirement</Label>
-              <Input
-                type="text"
-                name="requirements"
-                value={input.requirements}
-                onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
-              />
-            </div>
+
             <div>
               <Label>Salary</Label>
               <Input
@@ -164,7 +167,7 @@ function PostJob() {
                 name="salary"
                 value={input.salary}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1 w-full"
               />
             </div>
             <div>
@@ -174,7 +177,7 @@ function PostJob() {
                 name="location"
                 value={input.location}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1 w-full"
               />
             </div>
             <div>
@@ -184,7 +187,7 @@ function PostJob() {
                 name="jobType"
                 value={input.jobType}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1 w-full"
               />
             </div>
             <div>
@@ -194,7 +197,7 @@ function PostJob() {
                 name="experience"
                 value={input.experience}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1 w-full"
               />
             </div>
             <div>
@@ -204,43 +207,74 @@ function PostJob() {
                 name="position"
                 value={input.position}
                 onChange={changeEventHandler}
-                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
+                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1 w-full"
               />
             </div>
-            {companies.length > 0 && (
+            <div>
+              <Label>Requirement</Label>
+              <textarea
+                name="requirements"
+                value={input.requirements}
+                onChange={changeEventHandler}
+                rows="5"
+                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1 w-full p-2 border border-gray-300 rounded-md resize-none"
+              />
+            </div>
+            <div>
+              <Label>Description</Label>
+              <textarea
+                name="description"
+                value={input.description}
+                onChange={changeEventHandler}
+                rows="5"
+                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1 w-full p-2 border border-gray-300 rounded-md resize-none"
+              />
+            </div>
+
+            {/* Show company selection dropdown only if user has companies */}
+            {userCompanies.length > 0 ? (
               <Select
                 onValueChange={selectChangeHandler}
-                value={companies.find(
-                  (company) => company._id === input.companyId
-                )?.name.toLowerCase()}
+                value={input.companyId || ""}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a Company" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {companies.map((company) => (
-                      <SelectItem
-                        key={company._id}
-                        value={company?.name?.toLowerCase()}
-                      >
+                    {userCompanies.map((company) => (
+                      <SelectItem key={company._id} value={company._id}>
                         {company.name}
                       </SelectItem>
                     ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
+            ) : (
+              <div>
+                <Button
+                  className="w-full mt-2 flex justify-center"
+                  onClick={() => navigate("/admin/companies/create")}
+                >
+                  Register a Company
+                </Button>
+                {/* Message prompting user to register a company */}
+                <p className="text-red-500 text-sm mt-2 text-center">
+                  Please register a company first before posting a job.
+                </p>
+              </div>
             )}
           </div>
-          <Button type="submit" className="w-full mt-2" disabled={loading}>
-            {loading ? "Saving..." : jobId ? "Update Job" : "Post New Job"}
-          </Button>
-          {companies.length === 0 && (
-            <p className="text-xs text-red-600 font-bold text-center my-3">
-              Please register a company first, before posting a job!
-            </p>
+
+          {/* Show the Post New Job button only if the user has a company */}
+          {userCompanies.length > 0 && (
+            <div className="flex justify-center mt-4">
+              <Button type="submit" className="w-full sm:w-auto" disabled={loading}>
+                {loading ? "Saving..." : jobId ? "Update Job" : "Post New Job"}
+              </Button>
+            </div>
           )}
-        </form>
+        </motion.form>
       </div>
     </>
   );
