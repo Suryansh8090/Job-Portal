@@ -37,11 +37,18 @@ function UpdateProfileDialog({ open, setOpen }) {
 
   const fileChangeHandler = (e) => {
     const file = e.target.files?.[0];
-    setInput({ ...input, [e.target.name]: file });
+    //   console.log("Selected file:", file); // Debugging the selected file
+
+    if (e.target.name === "profilePhoto") {
+      setInput({ ...input, profilePhoto: file });
+    } else if (e.target.name === "resume") {
+      setInput({ ...input, file: file });
+    }
   };
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -60,6 +67,12 @@ function UpdateProfileDialog({ open, setOpen }) {
     );
     if (input.profilePhoto) formData.append("profilePhoto", input.profilePhoto);
     if (input.file) formData.append("resume", input.file);
+
+    // Debugging FormData before sending
+    //  console.log("FormData contents before sending:");
+    for (let [key, value] of formData.entries()) {
+      //   console.log(key, value);
+    }
 
     try {
       setLoading(true);

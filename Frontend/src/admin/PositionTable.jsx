@@ -66,8 +66,7 @@ function PositionTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Array.isArray(filteredCompanies) &&
-          filteredCompanies.length === 0 ? (
+          {Array.isArray(filteredCompanies) && filteredCompanies.length === 0 ? (
             <TableRow>
               <TableCell colSpan={5} className="text-center">
                 You haven't registered any companies yet.
@@ -76,54 +75,46 @@ function PositionTable() {
           ) : (
             Array.isArray(filteredCompanies) &&
             filteredCompanies.map((company) => (
-              <motion.div
+              <motion.tr
                 key={company._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
+                className="border-b"
               >
-                <TableRow>
-                  <TableCell>
-                    <Avatar>
-                      <AvatarImage
-                        src={
-                          company?.logo ||
-                          "https://yt3.googleusercontent.com/DP2DnSf8hIhdjThIsFyCqktfSgvrLeXfWA0xbPOo8I3n-P2_7c4otmLi6SwbUp1tXcWodn10=s900-c-k-c0x00ffffff-no-rj"
-                        }
-                      />
-                    </Avatar>
-                  </TableCell>
-                  <TableCell>{company?.name || "N/A"}</TableCell>
-
-                  <TableCell>
-                    {company?.createdAt
-                      ? company.createdAt
-                          .split("T")[0]
-                          .split("-")
-                          .reverse()
-                          .join("/")
-                      : "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Popover>
-                      <PopoverTrigger>
-                        <MoreHorizontal />
-                      </PopoverTrigger>
-                      <PopoverContent className="w-15">
-                        <div
-                          onClick={() =>
-                            navigate(`/admin/companies/${company._id}`)
-                          }
-                          className="flex items-center gap-2 w-fit cursor-pointer"
-                        >
-                          <Edit2 className="w-4" />
-                          <span>Edit</span>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                  </TableCell>
-                </TableRow>
-              </motion.div>
+                <TableCell>
+                  <Avatar>
+                    <AvatarImage
+                      src={
+                        company?.logo ||
+                        "https://yt3.googleusercontent.com/DP2DnSf8hIhdjThIsFyCqktfSgvrLeXfWA0xbPOo8I3n-P2_7c4otmLi6SwbUp1tXcWodn10=s900-c-k-c0x00ffffff-no-rj"
+                      }
+                    />
+                  </Avatar>
+                </TableCell>
+                <TableCell>{company?.name || "N/A"}</TableCell>
+                <TableCell>
+                  {company?.createdAt
+                    ? company.createdAt.split("T")[0].split("-").reverse().join("/")
+                    : "N/A"}
+                </TableCell>
+                <TableCell className="text-right">
+                  <Popover>
+                    <PopoverTrigger>
+                      <MoreHorizontal />
+                    </PopoverTrigger>
+                    <PopoverContent className="w-20">
+                      <div
+                        onClick={() => navigate(`/admin/companies/${company._id}`)}
+                        className="flex items-center gap-2 w-fit cursor-pointer hover:text-blue-600"
+                      >
+                        <Edit2 className="w-4" />
+                        <span>Edit</span>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </TableCell>
+              </motion.tr>
             ))
           )}
         </TableBody>

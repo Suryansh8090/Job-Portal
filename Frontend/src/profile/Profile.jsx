@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import Navbar from "@/layout/Navbar";
 import { Contact, Mail, Pen } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AppliedJob from "./components/AppliedJobTable";
 import UpdateProfileDialog from "./components/UpdateProfileDialog";
 import { useSelector } from "react-redux";
@@ -13,8 +13,26 @@ import AdminJobsTable from "@/admin/AdminJobsTable";
 
 function Profile() {
   useGetAllAppliedJobs();
+
   const [open, setOpen] = useState(false);
-  const { user } = useSelector((store) => store.auth); // Fetch user from Redux state
+  const { user } = useSelector((store) => store.auth);
+
+
+
+  // Log when the profile dialog opens
+  const handleOpenDialog = () => {
+    console.log("Opening profile update dialog...");
+    setOpen(true);
+  };
+
+  // Log when profile update dialog closes
+  const handleCloseDialog = () => {
+    console.log("Closing profile update dialog...");
+    setOpen(false);
+  };
+
+  
+  
 
   return (
     <>
@@ -38,7 +56,7 @@ function Profile() {
           <Button
             className="text-right"
             variant="outline"
-            onClick={() => setOpen(true)}
+            onClick={handleOpenDialog} // Log when dialog is opened
           >
             <Pen />
           </Button>
@@ -70,11 +88,11 @@ function Profile() {
 
         {user?.role === "student" ? (
           <div className="grid w-full max-w-sm item-center gap-1.5 mx-5">
-            {user?.profile?.resume ? (
+            {user?.profile?.resume?.url ? (
               <a
                 target="_blank"
                 className="text-md font-bold hover:text-blue-500"
-                href={user?.profile?.resume}
+                href={user?.profile?.resume?.url}
               >
                 Resume
                 <hr className="w-14 h-1 bg-black border-0 rounded" />
@@ -92,7 +110,7 @@ function Profile() {
         </h1>
         {user?.role === "student" ? <AppliedJob /> : <AdminJobsTable />}
       </div>
-      <UpdateProfileDialog open={open} setOpen={setOpen} />
+      <UpdateProfileDialog open={open} setOpen={handleCloseDialog} />
     </>
   );
 }
