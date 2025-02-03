@@ -1,0 +1,33 @@
+[33m5a02a2b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m896c58c[m HEAD@{1}: commit: Dependencies
+[33m5a02a2b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{2}: reset: moving to HEAD~1
+[33m0f2dd21[m HEAD@{3}: reset: moving to HEAD~1
+[33mc05f96e[m HEAD@{4}: commit: Missing Dependencies
+[33m0f2dd21[m HEAD@{5}: reset: moving to HEAD~7
+[33m2a03444[m HEAD@{6}: commit: case sensitive
+[33m7f12464[m HEAD@{7}: commit: case sen
+[33m249ccfd[m HEAD@{8}: commit: Fix case sensitivity issues
+[33mb2eba87[m HEAD@{9}: commit: Case Sensitive
+[33m8638944[m HEAD@{10}: commit: link with backend
+[33m473b8bb[m HEAD@{11}: commit: fix critical severity vulnerability
+[33m738b3e8[m HEAD@{12}: commit: Ensure Vite is installed
+[33m0f2dd21[m HEAD@{13}: commit: Ui update with debuging
+[33m5a02a2b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{14}: commit: functionality updation!
+[33m1f3f4b3[m HEAD@{15}: commit: Job functionality and Ui
+[33m7197d37[m HEAD@{16}: commit: Applicants jobs admin
+[33m6bdd478[m HEAD@{17}: commit: Company And Job All Functionality!
+[33m6311ef7[m HEAD@{18}: commit: Add functionality of profilePhoto and Resume!
+[33m2a2f835[m HEAD@{19}: commit: update Navbar for showing img!
+[33m3951181[m HEAD@{20}: commit: bio modification user model
+[33m363704b[m HEAD@{21}: commit: Profile Updation !
+[33md0fcdff[m HEAD@{22}: commit: Add token to local Storage
+[33m436c893[m HEAD@{23}: commit: user updation !
+[33ma370c11[m HEAD@{24}: commit: Add Job description
+[33mffe1594[m HEAD@{25}: commit: Add Profile Features
+[33m01fbcde[m HEAD@{26}: commit: Add Profile icon show feature while a user login!
+[33m1362455[m HEAD@{27}: commit: Create a user Browse Section!
+[33mb62c166[m HEAD@{28}: commit: Create a Jobs section!
+[33m31082fd[m HEAD@{29}: commit: Home Page!
+[33m3161eb9[m HEAD@{30}: commit: Adding Linking in Navbar
+[33ma14fcce[m HEAD@{31}: commit: Navbar Login and Signup! with their routes and backend connection!
+[33meabd787[m HEAD@{32}: reset: moving to HEAD~2
