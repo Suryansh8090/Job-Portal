@@ -46,7 +46,7 @@ function Companies() {
             onClick={() => navigate("/admin/companies/create")} // Navigate to the create company page
             className="ml-4" // Margin to the left for spacing between input and button
           >
-            New Vacancy
+            New Company
           </Button>
         </div>
 

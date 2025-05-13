@@ -13,11 +13,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { motion } from "framer-motion"; // Import Framer Motion
 import { Edit2, MoreHorizontal } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion"; // Import Framer Motion
 
 function PositionTable() {
   const { companies = [], searchCompanyByText } = useSelector(
@@ -56,7 +56,7 @@ function PositionTable() {
       transition={{ duration: 0.5 }}
     >
       <Table>
-        <TableCaption>A list of your recently posted Vacancies</TableCaption>
+        <TableCaption>A list of your recently posted Companies</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Logo</TableHead>

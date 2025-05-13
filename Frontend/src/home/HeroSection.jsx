@@ -1,24 +1,31 @@
 import AboutUs from "@/assets/aboutus.jpg.png";
+import amazon from "@/assets/amazon.png";
+import IBM from "@/assets/ibm.png";
+import Info from "@/assets/info.png";
 import Img from "@/assets/main.jpg";
 import manWoman from "@/assets/manWoman.png";
+import SupportImg from "@/assets/u.jpg";
+import Wipro from "@/assets/wipro.png";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { setSearchedQuery } from "@/public/jobslice";
 import {
   faFacebook,
   faInstagram,
   faTwitter,
 } from "@fortawesome/free-brands-svg-icons";
-import { faCopyright, faHeartbeat, faLaptop, faMoneyBillTrendUp } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCopyright,
+  faHeartbeat,
+  faLaptop,
+  faMoneyBillTrendUp,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { BarChart, Search } from "lucide-react";
+import { GraduationCap, School, Scroll, Search } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import CategoryCarousel from "./CategoryCarousel";
-
-
-
-
 
 function HeroSection() {
   const { user } = useSelector((store) => store.auth);
@@ -38,6 +45,44 @@ function HeroSection() {
       {children}
     </div>
   );
+
+  const qualifications = [
+    {
+      title: "Diploma",
+      vacancies: "60,000+ Vacancies",
+      icon: <Scroll className="h-8 w-8 text-indigo-600" />,
+    },
+    {
+      title: "Graduate",
+      vacancies: "7,10,000+ Vacancies",
+      icon: <GraduationCap className="h-8 w-8 text-indigo-600" />,
+    },
+    {
+      title: "Post Graduate",
+      vacancies: "15,000+ Vacancies",
+      icon: <School className="h-8 w-8 text-indigo-600" />,
+    },
+  ];
+
+  const companies = [
+    {
+      name: "Wipro",
+      logo: Wipro,
+      link: "",
+    },
+    {
+      name: "IBM",
+      logo: IBM,
+    },
+    {
+      name: "Infosys",
+      logo: Info,
+    },
+    {
+      name: "Amazon",
+      logo: amazon,
+    },
+  ];
 
   const [query, setQuery] = useState("");
   const dispatch = useDispatch();
@@ -158,6 +203,59 @@ function HeroSection() {
           </div>
         </div>
       )}
+      {/* Qualification Section  */}
+
+      {!user && isStudent && (
+        <section className="bg-indigo-50 py-12 px-4">
+          <div className="max-w-7xl mx-auto text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-10  text-indigo-700">
+              What is your Qualification?
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
+              {qualifications.map((qual, index) => (
+                <Card
+                  key={index}
+                  className="hover:shadow-lg transition duration-300 cursor-pointer"
+                >
+                  <CardContent className="p-6 flex flex-col items-center text-center space-y-3">
+                    {qual.icon}
+                    <h3 className="text-lg font-semibold">{qual.title}</h3>
+                    <p className="text-gray-600 text-sm">{qual.vacancies}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Featured Companies  */}
+
+      <section className="py-10 bg-muted">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-10 text-indigo-700">
+            Featured companies hiring now
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {companies.map((company, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg shadow p-6 flex flex-col items-center"
+              >
+                <img
+                  src={company.logo}
+                  alt={company.name}
+                  width={80}
+                  height={80}
+                  className="object-contain mb-4"
+                />
+                <h3 className="text-lg font-medium">{company.name}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Explore Jobs Student */}
       {isStudent ? (
@@ -245,7 +343,7 @@ function HeroSection() {
         <div className="max-w-6xl mx-auto text-center px-4">
           {/* Heading */}
           <h2 className="text-4xl font-extrabold  text-indigo-700  mb-12 tracking-tight">
-            {user ? "Thank You for Choosing Us!" : "Why Choose JobPortal?"}
+            {user ? "Thank You for Choosing Us!" : "Why Choose Us?"}
           </h2>
 
           {/* Student View */}
@@ -315,9 +413,7 @@ function HeroSection() {
       </section>
 
       {/* About Us Section */}
-
-      {/* About Us Section */}
-      <div id="aboutus" className="bg-indigo-50 py-10">
+      <div id="aboutus" className="bg-indigo-50 py-10 mb-2">
         <div className="max-w-6xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center gap-8">
           {/* Text Content */}
           <div className="text-center md:text-left w-full md:w-1/2">
@@ -344,6 +440,73 @@ function HeroSection() {
           </div>
         </div>
       </div>
+
+      {/* Community Support  */}
+
+      <section className="relative h-[60vh] mb-1 text-white flex items-center justify-center overflow-hidden mt-2">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <img
+            src={SupportImg}
+            alt="Community background"
+            className="w-full h-[300px] md:h-[400px] lg:h-[500px] object-cover opacity-70"
+          />
+
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 text-center max-w-xl px-4">
+          <h1 className="text-4xl font-bold mb-4">Join our community</h1>
+          <p className="mb-6 text-lg">
+            We’ve created a Discord server dedicated to helping you find
+            meaningful employment and preparing you for the recruitment process
+            from start to finish.
+          </p>
+          <Button
+            className="text-white bg-teal-500 hover:bg-teal-600"
+            onClick={() =>
+              window.open(
+                "https://chat.whatsapp.com/H5dpYrne1kE4SDSqSggMMY",
+                "_blank"
+              )
+            }
+          >
+            Join the community
+          </Button>
+        </div>
+
+        {/* Optional SVG Rings */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none">
+          <svg
+            className="w-[800px] h-[800px]"
+            viewBox="0 0 800 800"
+            fill="none"
+          >
+            <circle
+              cx="400"
+              cy="400"
+              r="300"
+              stroke="#3B82F6"
+              strokeWidth="8"
+            />
+            <circle
+              cx="400"
+              cy="400"
+              r="350"
+              stroke="#EF4444"
+              strokeWidth="6"
+            />
+            <circle
+              cx="400"
+              cy="400"
+              r="400"
+              stroke="#FACC15"
+              strokeWidth="4"
+            />
+          </svg>
+        </div>
+      </section>
 
       {/*  Footer  */}
       <div className="bg-gradient-to-r from-indigo-300 via-indigo-400 to-indigo-500">
