@@ -1,8 +1,9 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
 import { Application } from "../models/application.model.js";
 import { Job } from "../models/job.models.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { sendStatusSMS } from "../utils/smsService.js";
 
 const applyJob = asyncHandler(async (req, res) => {
   try {
@@ -32,7 +33,7 @@ const applyJob = asyncHandler(async (req, res) => {
     const newApplication = await Application.create({
       job: jobId,
       applicant: userId,
-    })   // .sort({createdAt: -1})
+    }); // .sort({createdAt: -1})
     job.applications.push(newApplication._id);
     await job.save();
 
@@ -104,7 +105,7 @@ const getApplicants = asyncHandler(async (req, res) => {
       );
   } catch (error) {
     console.log("error", error);
-    
+
     throw new ApiError(404, "Failed to retrieve applicants.");
   }
 });
@@ -118,23 +119,118 @@ const updateStatus = asyncHandler(async (req, res) => {
       throw new ApiError(404, "Status is required!");
     }
 
-    const application = await Application.findOne({ _id: applicationId });
+    const application = await Application.findOne({
+      _id: applicationId,
+    })
+      .populate({
+        path: "job",
+        populate: {
+          path: "company",
+        },
+      })
+      .populate("applicant");
+
+    console.log("Applicant:", application.applicant);
+
     if (!application) {
       throw new ApiError(404, "Application not found!");
     }
 
+    const studentName =
+      application.applicant.fullname || application.applicant.name || "Student";
+    let phoneNumber = application.applicant.phoneNumber;
+
+    if (!phoneNumber) {
+      console.error("Applicant phone number missing!");
+      throw new ApiError(
+        400,
+        "Applicant phone number is missing, cannot send SMS."
+      );
+    }
+
+    // Normalize phone number to E.164 format (assuming default country code +91 for India)
+    if (!phoneNumber.toString().startsWith("+")) {
+      phoneNumber = "+91" + phoneNumber.toString();
+    }
+
     // Update the status to lowercase to ensure consistency
     application.status = status.toLowerCase();
+    application.statusSeen = false;
+    application.statusChangedAt = new Date();
     await application.save();
+
+    // ✅ Fetch job and company info for SMS
+    const role = application.job?.title || "a position";
+    const companyName = application.job?.company?.name || "the company";
+
+    // ✅ Try sending SMS, but don’t fail status update if it errors
+    try {
+      await sendStatusSMS(
+        phoneNumber,
+        studentName,
+        application.status,
+        companyName,
+        role
+      );
+      console.log("✅ SMS sent to:", phoneNumber);
+    } catch (smsError) {
+      console.error("⚠️ Failed to send SMS:", smsError.message);
+      // You can optionally log this to a file or DB
+    }
 
     return res
       .status(200)
       .json(new ApiResponse(200, "Status updated successfully!"));
   } catch (error) {
     console.log(error);
-    
+
     throw new ApiError(400, "Failed to update the status.");
   }
 });
 
-export { applyJob, getAppliedJobs, getApplicants, updateStatus };
+const getUnseenStatusUpdates = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const role = req.user.role;
+
+  if (role !== "student") {
+    // either return an empty array or a 403; here’s an empty-array approach
+    return res
+      .status(200)
+      .json(new ApiResponse(200, [], "No updates for recruiters"));
+  }
+  const applications = await Application.find({
+    applicant: userId,
+    statusSeen: false,
+  }).populate({
+    path: "job",
+    populate: { path: "company" },
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, applications, "Unseen application updates fetched")
+    );
+});
+
+const markApplicationsAsSeen = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+
+  await Application.updateMany(
+    { applicant: userId, statusSeen: false },
+    { $set: { statusSeen: true } }
+  );
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Marked applications as seen"));
+});
+
+export {
+  applyJob,
+  getApplicants,
+  getAppliedJobs,
+  getUnseenStatusUpdates,
+  markApplicationsAsSeen,
+  updateStatus,
+};

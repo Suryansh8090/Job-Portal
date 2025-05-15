@@ -15,6 +15,11 @@ const applicationSchema = new mongoose.Schema({
         type:String,
         enum:['pending', 'accepted', 'rejected'],
         default:'pending'
-    }
+    },
+    statusSeen: {
+        type: Boolean,
+        default: true
+    }, 
+    statusChangedAt: Date,
 },{timestamps:true});
 export const Application  = mongoose.model("Application", applicationSchema);

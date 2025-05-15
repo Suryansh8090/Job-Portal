@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from "react";
-import Img from "../assets/login.jpg";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Navbar from "@/Layout/Navbar";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup } from "@/components/ui/radio-group";
-import USER_API_END_POINT from "../utils/constant";
+import Navbar from "@/Layout/Navbar";
+import { setLoading, setUser } from "@/public/authslice";
 import axios from "axios";
+import { motion } from "framer-motion"; // Import framer-motion for animations
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useDispatch, useSelector } from "react-redux";
-import { setLoading, setUser } from "@/public/authslice";
-import { Loader2 } from "lucide-react";
-import { motion } from "framer-motion"; // Import framer-motion for animations
+import Img from "../assets/login.jpg";
+import USER_API_END_POINT, {
+  APPLICATION_API_END_POINT,
+} from "../utils/constant";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
@@ -50,6 +52,43 @@ function Login() {
           sessionStorage.setItem("token", token);
           sessionStorage.setItem("user", JSON.stringify(res.data.user));
           dispatch(setUser(res.data.user)); // Store user data in Redux
+
+          // 🌟 Show popups if student has unseen application updates
+          if (res.data.user.role === "student") {
+            try {
+              const statusRes = await axios.get(
+                `${APPLICATION_API_END_POINT}/unseen-status`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              );
+
+              const unseenApplications = statusRes.data.data;
+              console.log("Unseen Applications:", unseenApplications);
+              if (unseenApplications && unseenApplications.length > 0) {
+                unseenApplications.forEach((app) => {
+                  toast.info(
+                    `Your application for ${app.job.title} at ${
+                      app.job.company.name
+                    } is now ${app.status.toUpperCase()}.`,
+                    { duration: 8000 }
+                  );
+                });
+
+                // Mark all as seen
+                await axios.post(
+                  `${APPLICATION_API_END_POINT}/mark-seen`,
+                  {},
+                  {
+                    headers: { Authorization: `Bearer ${token}` },
+                  }
+                );
+              }
+            } catch (err) {
+              console.error("Failed to fetch application updates", err);
+            }
+          }
+
           navigate("/"); // Redirect to home after successful login
           toast.success(res.data.message);
         } else {

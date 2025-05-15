@@ -11,11 +11,12 @@ function useGetAllAppliedJobs() {
     const fetchAllAppliedJobs = async () => {
       try {
         const token = localStorage.getItem("token");
+        console.log("Fetched token:", token);
         const res = await axios.get(`${APPLICATION_API_END_POINT}/get`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          withCredentials: true,
+          // withCredentials: true,
         });
      //   console.log(res.data);
 

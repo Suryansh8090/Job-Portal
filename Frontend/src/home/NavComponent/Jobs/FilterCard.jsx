@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { setLocationFilter, setRoleFilter } from "@/public/jobslice"; // Action for location and role filters
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 function FilterCard() {
   const [selectedLocation, setSelectedLocation] = useState([]); // State to hold selected locations
