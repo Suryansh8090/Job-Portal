@@ -8,31 +8,47 @@ function FilterCard() {
 
   // List of available locations and roles to filter by
   const locations = [
-    "Delhi", "Banglore", "Noida", "Pune", "Hyderabad", "Mumbai", 
-    "Delhi NCR", "Lucknow", 
+    "Delhi",
+    "Banglore",
+    "Noida",
+    "Pune",
+    "Hyderabad",
+    "Mumbai",
+    "Delhi NCR",
+    "Lucknow",
   ];
 
-  const roles = ["Frontend Developer", "Backend Developer", "Fullstack Developer"]; // Available roles
+  const roles = [
+    "Frontend Developer",
+    "Backend Developer",
+    "Fullstack Developer",
+    "DevOps Engineer",
+    "Cloud Engineer",
+    "Cybersecurity Analyst",
+    "Data Analyst",
+  ];
 
   const dispatch = useDispatch();
 
   // Handle changes in Location selection
   const handleLocationChange = (e) => {
     const location = e.target.value;
-    setSelectedLocation((prev) =>
-      prev.includes(location)
-        ? prev.filter((item) => item !== location) // Remove location if it's already selected
-        : [...prev, location] // Add location if it's not selected
+    setSelectedLocation(
+      (prev) =>
+        prev.includes(location)
+          ? prev.filter((item) => item !== location) // Remove location if it's already selected
+          : [...prev, location] // Add location if it's not selected
     );
   };
 
   // Handle changes in Role selection
   const handleRoleChange = (e) => {
     const role = e.target.value;
-    setSelectedRole((prev) =>
-      prev.includes(role)
-        ? prev.filter((item) => item !== role) // Remove role if it's already selected
-        : [...prev, role] // Add role if it's not selected
+    setSelectedRole(
+      (prev) =>
+        prev.includes(role)
+          ? prev.filter((item) => item !== role) // Remove role if it's already selected
+          : [...prev, role] // Add role if it's not selected
     );
   };
 
@@ -58,6 +74,7 @@ function FilterCard() {
               onChange={handleLocationChange}
               id={`location-${index}`}
               className="accent-blue-500"
+              checked={selectedLocation.includes(location)}
             />
             <label htmlFor={`location-${index}`}>{location}</label>
           </div>
@@ -75,6 +92,7 @@ function FilterCard() {
               onChange={handleRoleChange}
               id={`role-${index}`}
               className="accent-blue-500"
+              checked={selectedRole.includes(role)}
             />
             <label htmlFor={`role-${index}`}>{role}</label>
           </div>

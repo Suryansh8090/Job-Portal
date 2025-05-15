@@ -27,7 +27,10 @@ function Jobs() {
         locationFilter.length === 0 || locationFilter.includes(job.location);
 
       const matchesRole =
-        roleFilter.length === 0 || roleFilter.includes(job.title);
+        roleFilter.length === 0 ||
+        roleFilter.some((role) =>
+          job.title.toLowerCase().includes(role.toLowerCase())
+        );
 
       return matchesQuery && matchesLocation && matchesRole;
     });
