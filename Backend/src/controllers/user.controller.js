@@ -1,10 +1,10 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
+import twilio from "twilio";
+import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { User } from "../models/user.models.js";
-import getDataUri from "../utils/datauri.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import cloudinary from "../utils/cloudinary.js";
-
+import getDataUri from "../utils/datauri.js";
 
 const generateAccessToken = async function (userId) {
   try {
@@ -17,7 +17,10 @@ const generateAccessToken = async function (userId) {
   }
 };
 
-
+const client = twilio(
+  process.env.TWILIO_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 
 const registerUser = asyncHandler(async (req, res) => {
   const { fullname, email, phoneNumber, password, role } = req.body;
@@ -26,14 +29,17 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Missing user credentials.");
   }
 
-
+  const phoneRegex = /^[6-9]\d{9}$/; // For Indian mobile numbers
+  if (!phoneRegex.test(phoneNumber)) {
+    throw new ApiError(400, "Invalid phone number.");
+  }
 
   // Validate email format using a regex pattern
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
   if (!emailRegex.test(email)) {
     throw new ApiError(400, "Invalid email format.");
   }
-  
+
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw new ApiError(409, "User already exists with this email.");
@@ -67,6 +73,17 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Error registering the user.");
   }
 
+  // ✅ Send SMS after user is registered
+  try {
+    await client.messages.create({
+      body: `Hello ${fullname}, your signup was successful as a ${role}!`,
+      from: process.env.TWILIO_PHONE,
+      to: `+91${phoneNumber}`, // Assuming Indian numbers; adjust as needed
+    });
+  } catch (smsError) {
+    console.error("Failed to send SMS:", smsError.message);
+    // Do not throw error here, allow registration to continue
+  }
 
   res
     .status(201)
@@ -194,4 +211,5 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, loginUser, logoutUser, updateProfile };
+export { loginUser, logoutUser, registerUser, updateProfile };
+

@@ -9,13 +9,14 @@ function FilterCard() {
   // List of available locations and roles to filter by
   const locations = [
     "Delhi",
-    "Banglore",
+    "Bangalore",
     "Noida",
     "Pune",
     "Hyderabad",
     "Mumbai",
     "Delhi NCR",
     "Lucknow",
+    "Remote",
   ];
 
   const roles = [

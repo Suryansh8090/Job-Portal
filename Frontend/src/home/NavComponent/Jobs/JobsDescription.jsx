@@ -1,15 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/layout/Navbar";
+import { setSingleJob } from "@/public/jobslice";
+import { APPLICATION_API_END_POINT, JOB_API_END_POINT } from "@/utils/constant";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion"; // Import Framer Motion for animation
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { setSingleJob } from "@/public/jobslice";
 import { toast } from "sonner";
-import { JOB_API_END_POINT } from "@/utils/constant";
-import { APPLICATION_API_END_POINT } from "@/utils/constant";
-import { motion } from "framer-motion"; // Import Framer Motion for animation
 
 function JobsDescription() {
   const [isApplied, setIsApplied] = useState(false);
@@ -156,15 +155,21 @@ function JobsDescription() {
               </span>
             </h1>
             <h1 className="font-bold my-1">
-              Experience:{" "}
+              Required Skills:{" "}
               <span className="pl-4 font-normal text-gray-800">
-                {singlejob.experience}
+                {singlejob.requirements || "Not specified"}
               </span>
             </h1>
+            {/* <h1 className="font-bold my-1">
+              Experience:{" "}
+              <span className="pl-4 font-normal text-gray-800">
+                {singlejob.experience} year
+              </span>
+            </h1> */}
             <h1 className="font-bold my-1">
               Salary:{" "}
               <span className="pl-4 font-normal text-gray-800">
-                {singlejob.salary}
+                {singlejob.salary} LPA
               </span>
             </h1>
             <h1 className="font-bold my-1">

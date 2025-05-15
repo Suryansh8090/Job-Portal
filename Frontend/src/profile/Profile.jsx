@@ -71,7 +71,7 @@ function Profile() {
             <span>{user?.phoneNumber}</span>
           </div>
         </div>
-        {user?.role === "student" ? (
+        {/* {user?.role === "student" ? (
           <div className="flex mx-5 gap-4 my-5">
             <h1 className="font-semibold">Skills</h1>
             <div className="flex items-center gap-1">
@@ -84,7 +84,7 @@ function Profile() {
               )}
             </div>
           </div>
-        ) : null}
+        ) : null} */}
 
         {user?.role === "student" ? (
           <div className="grid w-full max-w-sm item-center gap-1.5 mx-5">

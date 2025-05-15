@@ -136,7 +136,7 @@ function UpdateProfileDialog({ open, setOpen }) {
             {user?.role !== "recruiter" && (
               <>
                 {/* Skills Input */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <Label htmlFor="skills">Skills</Label>
                   <Input
                     type="text"
@@ -147,7 +147,7 @@ function UpdateProfileDialog({ open, setOpen }) {
                     className="col-span-3 w-full"
                     placeholder="Comma separated"
                   />
-                </div>
+                </div> */}
 
                 {/* Resume Upload */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -10,13 +10,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Navbar from "@/layout/Navbar";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { JOB_API_END_POINT } from "@/utils/constant";
-import { toast } from "sonner";
+import axios from "axios";
+import { motion } from "framer-motion"; // Import Framer Motion
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { motion } from "framer-motion";  // Import Framer Motion
+import { toast } from "sonner";
 
 function PostJob() {
   const [input, setInput] = useState({
