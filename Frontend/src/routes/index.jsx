@@ -1,17 +1,18 @@
+import AdminJobs from "@/admin/AdminJobs";
+import Applicants from "@/admin/Applicants";
+import Companies from "@/admin/Companies";
+import CompanySetup from "@/admin/CompanySetup";
+import CreateCompany from "@/admin/CreateCompany";
+import PostJob from "@/admin/PostJob";
+import ForgotPassword from "@/authentication/ForgotPassword";
+import Browse from "@/home/NavComponent/Browse/Browse";
+import Jobs from "@/home/NavComponent/Jobs/Jobs";
+import JobsDescription from "@/home/NavComponent/Jobs/JobsDescription";
+import Profile from "@/profile/Profile";
 import { createBrowserRouter } from "react-router-dom";
-import Home from "../home/Home";
 import Login from "../authentication/Login";
 import Signup from "../authentication/Signup";
-import Jobs from "@/home/NavComponent/Jobs/Jobs";
-import Browse from "@/home/NavComponent/Browse/Browse";
-import Profile from "@/profile/Profile";
-import JobsDescription from "@/home/NavComponent/Jobs/JobsDescription";
-import Companies from "@/admin/Companies";
-import CreateCompany from "@/admin/CreateCompany";
-import CompanySetup from "@/admin/CompanySetup";
-import AdminJobs from "@/admin/AdminJobs";
-import PostJob from "@/admin/PostJob";
-import Applicants from "@/admin/Applicants";
+import Home from "../home/Home";
 
 
 const appRoute = createBrowserRouter([
@@ -27,6 +28,10 @@ const appRoute = createBrowserRouter([
   {
     path: "/signup",
     element: <Signup />,
+  },
+   {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
   },
   {
     path: "/jobs",

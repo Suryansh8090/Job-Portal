@@ -278,6 +278,11 @@ function Login() {
                   Sign up
                 </a>
               </p>
+              <p className="mt-2">
+                <a href="/forgot-password" className="text-blue-600">
+                  Forgot Password?
+                </a>
+              </p>
             </div>
           </div>
         </motion.div>

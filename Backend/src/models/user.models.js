@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
     profile: {
       bio: { type: String, default: "" },
       skills: [{ type: String }],
-      resume: { 
+      resume: {
         url: { type: String }, // Store the URL of the resume
         originalName: { type: String }, // Store the original file name
       },
@@ -46,6 +46,7 @@ const userSchema = new mongoose.Schema(
 userSchema.pre("save", async function (next) {
   try {
     if (!this.isModified("password")) return next();
+    console.log(`Hashing password for user: ${this.email}`);
     this.password = await bcrypt.hash(this.password, 10);
     next();
   } catch (err) {

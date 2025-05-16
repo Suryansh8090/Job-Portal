@@ -1,4 +1,5 @@
 import twilio from "twilio";
+import { OTP } from "../models/otp.model.js";
 import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -17,10 +18,7 @@ const generateAccessToken = async function (userId) {
   }
 };
 
-const client = twilio(
-  process.env.TWILIO_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
+const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
 
 const registerUser = asyncHandler(async (req, res) => {
   const { fullname, email, phoneNumber, password, role } = req.body;
@@ -211,5 +209,66 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { loginUser, logoutUser, registerUser, updateProfile };
+// ✅ Send OTP
+const sendOtp = asyncHandler(async (req, res) => {
+  const { phoneNumber } = req.body;
+
+  if (!phoneNumber) throw new ApiError(400, "Phone number is required");
+
+  const user = await User.findOne({ phoneNumber });
+  if (!user) throw new ApiError(404, "User not found with this phone number");
+
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  await OTP.deleteMany({ phoneNumber });
+  await OTP.create({ phoneNumber, otp });
+
+  try {
+    await client.messages.create({
+      body: `Your password reset OTP is ${otp}`,
+      from: process.env.TWILIO_PHONE,
+      to: `+91${phoneNumber}`,
+    });
+
+    res.status(200).json(new ApiResponse(200, null, "OTP sent successfully"));
+  } catch (err) {
+    console.error("Twilio error:", err.message);
+    throw new ApiError(500, "Failed to send OTP");
+  }
+});
+
+// ✅ Reset Password
+const resetPassword = asyncHandler(async (req, res) => {
+  const { phoneNumber, otp, newPassword } = req.body;
+
+  if (!phoneNumber || !otp || !newPassword) {
+    throw new ApiError(400, "All fields are required");
+  }
+
+  const validOtp = await OTP.findOne({
+    phoneNumber,
+    otp,
+    createdAt: { $gt: new Date(Date.now() - 5 * 60 * 1000) },
+  });
+  if (!validOtp) throw new ApiError(400, "Invalid or expired OTP");
+
+  const user = await User.findOne({ phoneNumber });
+  if (!user) throw new ApiError(404, "User not found");
+
+  user.password = newPassword;
+  user.markModified("password");
+  await user.save();
+  console.log("Password reset and saved for user:", user.email);
+  await OTP.deleteMany({ phoneNumber }); // Clear OTPs
+
+  res.status(200).json(new ApiResponse(200, null, "Password reset successful"));
+});
+
+export {
+  loginUser,
+  logoutUser,
+  registerUser,
+  resetPassword,
+  sendOtp,
+  updateProfile
+};
 
