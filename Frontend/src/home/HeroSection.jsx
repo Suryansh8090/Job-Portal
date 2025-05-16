@@ -15,10 +15,18 @@ import {
   faTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import {
+  faBriefcase,
+  faBuilding,
+  faCheckCircle,
+  faClipboardCheck,
   faCopyright,
   faHeartbeat,
   faLaptop,
   faMoneyBillTrendUp,
+  faPaperPlane,
+  faShieldAlt,
+  faUserPlus,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GraduationCap, School, Scroll, Search } from "lucide-react";
@@ -68,7 +76,6 @@ function HeroSection() {
     {
       name: "Wipro",
       logo: Wipro,
-      link: "",
     },
     {
       name: "IBM",
@@ -205,7 +212,7 @@ function HeroSection() {
       )}
       {/* Qualification Section  */}
 
-      {!user && isStudent && (
+      {(!user || isStudent) &&  (
         <section className="bg-indigo-50 py-12 px-4">
           <div className="max-w-7xl mx-auto text-center">
             <h2 className="text-2xl sm:text-3xl font-bold mb-10  text-indigo-700">
@@ -352,17 +359,17 @@ function HeroSection() {
               <FeatureCard
                 title="Verified Opportunities"
                 description="All job postings are screened and verified to protect your job search experience and ensure legitimacy."
-                icon="check-circle"
+                icon={faCheckCircle}
               />
               <FeatureCard
                 title="1-Click Apply"
                 description="Apply for roles in seconds with streamlined application forms. No red tape—just results."
-                icon="paper-plane"
+                icon={faPaperPlane}
               />
               <FeatureCard
                 title="Expert Career Guidance"
                 description="Access curated tips, resume tools, and interview prep tailored for students and freshers."
-                icon="lightbulb"
+                icon={faPaperPlane}
               />
             </div>
           )}
@@ -373,17 +380,17 @@ function HeroSection() {
               <FeatureCard
                 title="Qualified Talent Pool"
                 description="Tap into a growing database of talented job seekers ready to meet your business needs."
-                icon="users"
+                icon={faUsers}
               />
               <FeatureCard
                 title="All-in-One Hiring Tools"
                 description="Post jobs, manage applications, and schedule interviews seamlessly—all in one place."
-                icon="clipboard-check"
+                icon={faClipboardCheck}
               />
               <FeatureCard
                 title="Trusted & Verified Candidates"
                 description="Every profile is authenticated with real data—ensuring you hire with confidence."
-                icon="shield-check"
+                icon={faShieldAlt}
               />
             </div>
           )}
@@ -394,17 +401,17 @@ function HeroSection() {
               <FeatureCard
                 title="Opportunities for Everyone"
                 description="From entry-level jobs to experienced roles, find the right match for your goals."
-                icon="briefcase"
+                icon={faBriefcase}
               />
               <FeatureCard
                 title="Build Employer Connections"
                 description="Connect with top companies and take a step closer to your next big opportunity."
-                icon="building"
+                icon={faBuilding}
               />
               <FeatureCard
                 title="Create Your Free Profile"
                 description="Sign up today to explore job listings or post openings and connect with talent."
-                icon="user-plus"
+                icon={faUserPlus}
                 cta="Sign Up Now"
               />
             </div>

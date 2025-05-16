@@ -6,7 +6,8 @@ import {
   getAppliedJobs,
   updateStatus,
   getUnseenStatusUpdates,
-  markApplicationsAsSeen
+  markApplicationsAsSeen,
+  getApplicationStatus
 } from "../controllers/application.controller.js";
 
 const router = Router();
@@ -17,5 +18,5 @@ router.route("/:id/applicants").get(isAuthenticated, getApplicants);
 router.route("/status/:id/update").post(isAuthenticated, updateStatus);
 router.get("/unseen-status", isAuthenticated, getUnseenStatusUpdates);
 router.post("/mark-seen", isAuthenticated, markApplicationsAsSeen);
-
+router.get("/status/:jobId", isAuthenticated, getApplicationStatus);
 export default router;

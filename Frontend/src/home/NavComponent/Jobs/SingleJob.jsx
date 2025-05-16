@@ -19,17 +19,34 @@ function SingleJob({ job, onDelete }) {
   // Bookmark state
   const [bookmarked, setBookmarked] = useState(false);
 
-  useEffect(() => {
-    if (job?.applications && user?._id) {
-      setIsApplied(
-        job.applications.some(
-          (application) => application.applicant === user._id
-        )
-      );
-    }
-  }, [job, user?._id]);
-
   // Toggle bookmark handler
+
+  useEffect(() => {
+    const checkIfApplied = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          `${APPLICATION_API_END_POINT}/status/${job._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+
+        setIsApplied(res.data?.data?.isApplied || false);
+      } catch (err) {
+        console.error("Error checking application status", err);
+        setIsApplied(false);
+      }
+    };
+
+    if (user?._id && job?._id) {
+      checkIfApplied();
+    }
+  }, [job._id, user?._id]);
+
   const toggleBookmark = () => {
     setBookmarked((prev) => !prev);
   };
@@ -94,11 +111,7 @@ function SingleJob({ job, onDelete }) {
           onClick={toggleBookmark}
           aria-label={bookmarked ? "Remove bookmark" : "Add bookmark"}
         >
-          <Bookmark
-            color={
-              bookmarked ? "#00008B"  : "#6B7280" /* gray-500 */
-            }
-          />
+          <Bookmark color={bookmarked ? "#00008B" : "#6B7280" /* gray-500 */} />
         </Button>
       </div>
 

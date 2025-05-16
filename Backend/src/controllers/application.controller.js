@@ -226,6 +226,25 @@ const markApplicationsAsSeen = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "Marked applications as seen"));
 });
 
+const getApplicationStatus = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const jobId = req.params.jobId;
+
+  if (!jobId) {
+    throw new ApiError(400, "Job ID is required");
+  }
+
+  const existingApplication = await Application.findOne({
+    job: jobId,
+    applicant: userId,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { isApplied: !!existingApplication }, "Application status fetched"));
+});
+
+
 export {
   applyJob,
   getApplicants,
@@ -233,4 +252,5 @@ export {
   getUnseenStatusUpdates,
   markApplicationsAsSeen,
   updateStatus,
+  getApplicationStatus,
 };

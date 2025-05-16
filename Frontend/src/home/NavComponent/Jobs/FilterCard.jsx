@@ -9,23 +9,22 @@ function FilterCard() {
   // List of available locations and roles to filter by
   const locations = [
     "Delhi",
-    "Bangalore",
+    "Bangaluru",
     "Noida",
     "Pune",
     "Hyderabad",
     "Mumbai",
-    "Delhi NCR",
     "Lucknow",
     "Remote",
   ];
 
   const roles = [
     "Frontend Developer",
-    "Backend Developer",
     "Fullstack Developer",
     "DevOps Engineer",
-    "Cloud Engineer",
+    "Software Engineer",
     "Cybersecurity Analyst",
+    "Backend Developer",
     "Data Analyst",
   ];
 
