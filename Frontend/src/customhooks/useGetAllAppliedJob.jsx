@@ -1,8 +1,8 @@
-import { setAllAppliedJobs, setAllJobs } from "@/public/jobslice";
-import axios from "axios";
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { setAllAppliedJobs } from "@/public/jobslice";
 import { APPLICATION_API_END_POINT } from "@/utils/constant";
+import axios from "axios";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 function useGetAllAppliedJobs() {
   const dispatch = useDispatch();
@@ -16,7 +16,7 @@ function useGetAllAppliedJobs() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          // withCredentials: true,
+           withCredentials: true,
         });
      //   console.log(res.data);
 

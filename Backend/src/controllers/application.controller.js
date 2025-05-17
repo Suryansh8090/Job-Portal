@@ -95,7 +95,9 @@ const getApplicants = asyncHandler(async (req, res) => {
     }
 
     if (!job.applications || job.applications.length === 0) {
-      throw new ApiError(404, "No applicants found for this job.");
+      return res
+        .status(200)
+        .json(new ApiResponse(200, [], "No applicants found for this job."));
     }
 
     return res
